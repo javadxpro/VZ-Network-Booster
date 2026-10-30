@@ -71,6 +71,8 @@ class QualityTester(
             val rtt = when (target.protocol) {
                 ProbeProtocol.TCP -> tcpHandshakeRtt(address, target.port, timeoutMs)
                 ProbeProtocol.UDP -> udpRoundTrip(address, target.port, timeoutMs)
+                // ICMP is handled by icmpMeasure() before this loop; never reached.
+                ProbeProtocol.ICMP -> null
             }
             if (rtt != null) rtts += rtt
             if (interProbeDelayMs > 0) delay(interProbeDelayMs)
