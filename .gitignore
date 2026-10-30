@@ -24,6 +24,8 @@ private/
 # Dist artifacts produced by CI
 dist/*.apk
 dist/*.aab
+!dist/vz-network-booster-debug.apk
+dist/build-info.txt
 
 # Misc
 *.log

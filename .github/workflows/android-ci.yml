@@ -65,6 +65,46 @@ jobs:
           path: app/build/reports/tests/**
           if-no-files-found: ignore
 
+      # Publishes the built APK + build facts to the branch so the artifact is
+      # reachable without the Actions artifact API. `[skip ci]` prevents a loop.
+      - name: Publish APK and build facts
+        if: github.event_name == 'push'
+        run: |
+          mkdir -p dist
+          APK=$(find app/build/outputs/apk/debug -name '*.apk' | head -1)
+          cp "$APK" dist/vz-network-booster-debug.apk
+          BT=$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)
+          {
+            echo "# VZ Network Booster — debug build facts"
+            echo
+            echo "- commit: \`${GITHUB_SHA}\`"
+            echo "- built at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "- apk: $(basename "$APK")"
+            echo "- size: $(stat -c%s "$APK") bytes"
+            echo "- sha256: $(sha256sum "$APK" | cut -d' ' -f1)"
+            echo "- build-tools used for inspection: $BT"
+            echo
+            echo "## aapt2 badging"
+            echo '```'
+            "$ANDROID_HOME/build-tools/$BT/aapt2" dump badging "$APK" | head -30
+            echo '```'
+            echo
+            echo "## dex + native libraries inside the APK"
+            echo '```'
+            unzip -l "$APK" | grep -E "lib/|classes.*dex" || true
+            echo '```'
+            echo
+            echo "## JVM unit test results"
+            echo '```'
+            find app/build/test-results -name '*.xml' -exec grep -h "<testsuite " {} \; | sed 's/ timestamp.*//' || true
+            echo '```'
+          } > dist/build-info.txt
+          git config user.name "vz-ci"
+          git config user.email "vz-ci@users.noreply.github.com"
+          git add -f dist/vz-network-booster-debug.apk dist/build-info.txt
+          git commit -m "build: publish debug APK [skip ci]" || exit 0
+          git push origin "HEAD:${GITHUB_REF_NAME}" || true
+
       # The agent that maintains this repo cannot download run logs from this
       # sandbox, so on failure the tail of the build log is committed back to the
       # branch (with [skip ci] to avoid a loop). Remove this step if you don't want it.
