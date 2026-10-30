@@ -1,10 +1,10 @@
 # VZ Network Booster — debug build facts
 
-- commit: `9d4e61400e69e4e8d0abce52a2f451483a426b48`
-- built at: 2026-10-30T07:20:51Z
+- commit: `8699ff8a1604e3b6f6abbdd6a94203ba16f7e4cf`
+- built at: 2026-10-30T07:45:09Z
 - apk: app-debug.apk
 - size: 23601737 bytes
-- sha256: 9a766b6c07013392f38e20d07decdd17353c200d951ef06c465d98d534adb7f8
+- sha256: 8815216227792306302bb5a73ab4b295ad963b34ee86d1eeb7f2c7c7598410d3
 - build-tools used for inspection: 37.0.0
 
 ## aapt2 badging
@@ -87,9 +87,9 @@ application-label-es:'VZ Network Booster'
 ```
 zipalign: OK
 V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: 06302271a6e116d82f83f78f33aca28c7fd3c776ce7af033ddb0703f5da06774
-V2 Signer: certificate SHA-1 digest: e0891aaa4c7bba2192a6a7eda0589863ed28f123
-V2 Signer: certificate MD5 digest: 63cd9b89eb94e04dfda4e38a4b1d4c1f
+V2 Signer: certificate SHA-256 digest: 27cf5cf03e7da9d49125a37956ee76b270d9a0b72a9b96a1d64c1c3c8f3c0f30
+V2 Signer: certificate SHA-1 digest: 779a82f7eda3d17c6e7129c1ae07f4cbe000c175
+V2 Signer: certificate MD5 digest: 9ee3d70da601316cdee63a3abf93e25a
 ```
 
 ## JVM unit test results
