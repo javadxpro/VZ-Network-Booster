@@ -1,10 +1,10 @@
 # VZ Network Booster — debug build facts
 
-- commit: `ed165e17ec80c47f1a7733118de0bec91f4e3fa3`
-- built at: 2026-10-30T08:04:28Z
+- commit: `c1e6d89d27af31139faa283b78b29dc936f5c138`
+- built at: 2026-10-30T10:19:13Z
 - apk: app-debug.apk
-- size: 23634564 bytes
-- sha256: 7f9a501b3453dffb5c39e63ad5f910bd9109f650095815ea2f0630f30ff4536e
+- size: 23650948 bytes
+- sha256: 11725b8b70eb9273c5eeb3d1ffd3c74513a45bbd95196d744c0a23eb20f4442b
 - build-tools used for inspection: 37.0.0
 
 ## aapt2 badging
@@ -48,11 +48,11 @@ application-label-es:'VZ Network Booster'
       612  1981-01-01 01:01   classes11.dex
   5538584  1981-01-01 01:01   classes12.dex
     34652  1981-01-01 01:01   classes2.dex
-    30236  1981-01-01 01:01   classes3.dex
-   302868  1981-01-01 01:01   classes4.dex
+    35092  1981-01-01 01:01   classes3.dex
+   313036  1981-01-01 01:01   classes4.dex
     37996  1981-01-01 01:01   classes5.dex
-   133784  1981-01-01 01:01   classes6.dex
-    53192  1981-01-01 01:01   classes7.dex
+   142532  1981-01-01 01:01   classes6.dex
+    54200  1981-01-01 01:01   classes7.dex
     13052  1981-01-01 01:01   classes8.dex
     22084  1981-01-01 01:01   classes9.dex
     10096  1981-01-01 01:01   lib/arm64-v8a/libandroidx.graphics.path.so
@@ -88,9 +88,9 @@ application-label-es:'VZ Network Booster'
 ```
 zipalign: OK
 V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: 1bf6123152feeb8ab55c7ee433e0b69a352ddb1e4f752417fd98c16cb16d517c
-V2 Signer: certificate SHA-1 digest: caac39ca77e7a4ee0384ead36f83dc8237254437
-V2 Signer: certificate MD5 digest: 3f9ef7a5afec6c2b0035bf1bb06e581b
+V2 Signer: certificate SHA-256 digest: 4dc692ce4c9264be81f7417583103c7890654ec6e613ead7567568902306e2c3
+V2 Signer: certificate SHA-1 digest: 029b34576eab9f76b4ddf053dfeeb9314063b158
+V2 Signer: certificate MD5 digest: 32909bcc40bc806f96c79a02f69d215b
 ```
 
 ## JVM unit test results
