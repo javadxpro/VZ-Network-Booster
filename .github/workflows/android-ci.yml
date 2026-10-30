@@ -49,6 +49,10 @@ jobs:
           echo "using build-tools $BT"
           "$ANDROID_HOME/build-tools/$BT/aapt2" dump badging "$APK" | head -25
           unzip -l "$APK" | grep -E "lib/|classes.dex" | head -20
+          echo "--- zipalign check ---"
+          "$ANDROID_HOME/build-tools/$BT/zipalign" -c -v 4 "$APK" | tail -3
+          echo "--- apksigner verify ---"
+          "$ANDROID_HOME/build-tools/$BT/apksigner" verify --verbose "$APK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -92,6 +96,12 @@ jobs:
             echo "## dex + native libraries inside the APK"
             echo '```'
             unzip -l "$APK" | grep -E "lib/|classes.*dex" || true
+            echo '```'
+            echo
+            echo "## signature and alignment"
+            echo '```'
+            "$ANDROID_HOME/build-tools/$BT/zipalign" -c 4 "$APK" && echo "zipalign: OK"
+            "$ANDROID_HOME/build-tools/$BT/apksigner" verify --print-certs "$APK" | head -6
             echo '```'
             echo
             echo "## JVM unit test results"
