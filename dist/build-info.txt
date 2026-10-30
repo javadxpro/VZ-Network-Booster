@@ -1,10 +1,10 @@
 # VZ Network Booster — debug build facts
 
-- commit: `d8bb31f5978e9ba7addee86605fdeecb7967085b`
-- built at: 2026-10-30T07:54:08Z
+- commit: `ed165e17ec80c47f1a7733118de0bec91f4e3fa3`
+- built at: 2026-10-30T08:04:28Z
 - apk: app-debug.apk
-- size: 23601737 bytes
-- sha256: 93d73f50dada6956f4c5c5133d70a35a42c2a73462767aaccb236c37b40dfb93
+- size: 23634564 bytes
+- sha256: 7f9a501b3453dffb5c39e63ad5f910bd9109f650095815ea2f0630f30ff4536e
 - build-tools used for inspection: 37.0.0
 
 ## aapt2 badging
@@ -44,16 +44,17 @@ application-label-es:'VZ Network Booster'
 ## dex + native libraries inside the APK
 ```
  18255892  1981-01-01 01:01   classes.dex
-      612  1981-01-01 01:01   classes10.dex
-  5538584  1981-01-01 01:01   classes11.dex
+     9972  1981-01-01 01:01   classes10.dex
+      612  1981-01-01 01:01   classes11.dex
+  5538584  1981-01-01 01:01   classes12.dex
     34652  1981-01-01 01:01   classes2.dex
-   263828  1981-01-01 01:01   classes3.dex
-    37688  1981-01-01 01:01   classes4.dex
-   113980  1981-01-01 01:01   classes5.dex
-    49952  1981-01-01 01:01   classes6.dex
-    13052  1981-01-01 01:01   classes7.dex
-    22084  1981-01-01 01:01   classes8.dex
-     9972  1981-01-01 01:01   classes9.dex
+    30236  1981-01-01 01:01   classes3.dex
+   302868  1981-01-01 01:01   classes4.dex
+    37996  1981-01-01 01:01   classes5.dex
+   133784  1981-01-01 01:01   classes6.dex
+    53192  1981-01-01 01:01   classes7.dex
+    13052  1981-01-01 01:01   classes8.dex
+    22084  1981-01-01 01:01   classes9.dex
     10096  1981-01-01 01:01   lib/arm64-v8a/libandroidx.graphics.path.so
   3365264  1981-01-01 01:01   lib/arm64-v8a/libwg-go.so
     29952  1981-01-01 01:01   lib/arm64-v8a/libwg-quick.so
@@ -87,13 +88,14 @@ application-label-es:'VZ Network Booster'
 ```
 zipalign: OK
 V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: 6595e5e3521623e08257a0459e84bce269e26bace58225187d4ed5c053f3e0f0
-V2 Signer: certificate SHA-1 digest: 7b30f18cdeda2a6f3eead0eae6b890f0281b9bc3
-V2 Signer: certificate MD5 digest: 84445171fa59c666e85c395cf2cda1a6
+V2 Signer: certificate SHA-256 digest: 1bf6123152feeb8ab55c7ee433e0b69a352ddb1e4f752417fd98c16cb16d517c
+V2 Signer: certificate SHA-1 digest: caac39ca77e7a4ee0384ead36f83dc8237254437
+V2 Signer: certificate MD5 digest: 3f9ef7a5afec6c2b0035bf1bb06e581b
 ```
 
 ## JVM unit test results
 ```
+<testsuite name="com.vz.networkbooster.IcmpPingParserTest" tests="6" skipped="0" failures="0" errors="0"
 <testsuite name="com.vz.networkbooster.WireGuardConfigBuilderTest" tests="5" skipped="0" failures="0" errors="0"
 <testsuite name="com.vz.networkbooster.ConfigImporterTest" tests="7" skipped="0" failures="0" errors="0"
 <testsuite name="com.vz.networkbooster.QualityStatsTest" tests="5" skipped="0" failures="0" errors="0"
