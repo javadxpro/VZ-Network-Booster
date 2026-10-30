@@ -32,6 +32,31 @@ class SettingsStore(context: Context) {
         get() = prefs.getInt(KEY_SAMPLES, 10)
         set(value) = prefs.edit { putInt(KEY_SAMPLES, value) }
 
+    // ---------------------------------------------------------------- root mode
+    var rootEnabled: Boolean
+        get() = prefs.getBoolean(KEY_ROOT_ENABLED, false)
+        set(value) = prefs.edit { putBoolean(KEY_ROOT_ENABLED, value) }
+
+    var rootWifiPowerSave: Boolean
+        get() = prefs.getBoolean(KEY_ROOT_WIFI, true)
+        set(value) = prefs.edit { putBoolean(KEY_ROOT_WIFI, value) }
+
+    var rootDozeWhitelist: Boolean
+        get() = prefs.getBoolean(KEY_ROOT_DOZE, true)
+        set(value) = prefs.edit { putBoolean(KEY_ROOT_DOZE, value) }
+
+    var rootTcpBbr: Boolean
+        get() = prefs.getBoolean(KEY_ROOT_TCP, false)
+        set(value) = prefs.edit { putBoolean(KEY_ROOT_TCP, value) }
+
+    var rootDropCaches: Boolean
+        get() = prefs.getBoolean(KEY_ROOT_CACHES, false)
+        set(value) = prefs.edit { putBoolean(KEY_ROOT_CACHES, value) }
+
+    var rootIcmpProbes: Boolean
+        get() = prefs.getBoolean(KEY_ROOT_ICMP, true)
+        set(value) = prefs.edit { putBoolean(KEY_ROOT_ICMP, value) }
+
     private companion object {
         const val KEY_GAME = "active_game"
         const val KEY_SERVER = "active_server"
@@ -39,5 +64,11 @@ class SettingsStore(context: Context) {
         const val KEY_SPLIT = "split_tunnel_game_only"
         const val KEY_INCLUDE_SELF = "include_self"
         const val KEY_SAMPLES = "probe_samples"
+        const val KEY_ROOT_ENABLED = "root_enabled"
+        const val KEY_ROOT_WIFI = "root_wifi_power_save"
+        const val KEY_ROOT_DOZE = "root_doze_whitelist"
+        const val KEY_ROOT_TCP = "root_tcp_bbr"
+        const val KEY_ROOT_CACHES = "root_drop_caches"
+        const val KEY_ROOT_ICMP = "root_icmp"
     }
 }

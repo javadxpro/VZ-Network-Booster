@@ -28,6 +28,16 @@ fun SettingsScreen(
     onSplitTunnel: (Boolean) -> Unit,
     onIncludeSelf: (Boolean) -> Unit,
     onResetIdentity: () -> Unit,
+    onRootEnabled: (Boolean) -> Unit,
+    onRootWifi: (Boolean) -> Unit,
+    onRootDoze: (Boolean) -> Unit,
+    onRootTcp: (Boolean) -> Unit,
+    onRootCaches: (Boolean) -> Unit,
+    onRootIcmp: (Boolean) -> Unit,
+    onApplyRoot: () -> Unit,
+    onRevertRoot: () -> Unit,
+    onRefreshRoot: () -> Unit,
+    onDropCaches: () -> Unit,
 ) {
     val clipboard = LocalClipboardManager.current
 
@@ -57,6 +67,64 @@ fun SettingsScreen(
                 checked = state.includeSelfForMeasurement,
                 onChange = onIncludeSelf,
             )
+        }
+
+        SectionCard(
+            title = "Root mode (اختیاری)",
+            subtitle = "روت فقط چیزهایی را ممکن می‌کند که بدون آن غیرممکن است؛ هیچ کاهش جادویی پینگ در کار نیست.",
+        ) {
+            Text(
+                text = if (state.rootAvailable) {
+                    "root: available — ${state.rootDetail}"
+                } else {
+                    "root: not available — ${state.rootDetail}"
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = if (state.rootAvailable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+            )
+            SwitchRow(
+                label = "استفاده از روت",
+                detail = "فعال‌سازی این گزینه اجازه می‌دهد اپ دستورهای allow-list شده را با su اجرا کند.",
+                checked = state.rootEnabled,
+                onChange = onRootEnabled,
+            )
+            SwitchRow(
+                label = "وای‌فای: خاموش کردن power save",
+                detail = "یکی از منابع واقعی جهش تأخیر (jitter) روی وای‌فای؛ هنگام قطع اتصال بازگردانی می‌شود.",
+                checked = state.rootWifiPowerSave,
+                onChange = onRootWifi,
+            )
+            SwitchRow(
+                label = "Whitelist در Doze",
+                detail = "سرویس تونل در پس‌زمینه توسط سیستم کشته نمی‌شود.",
+                checked = state.rootDozeWhitelist,
+                onChange = onRootDoze,
+            )
+            SwitchRow(
+                label = "BBR برای TCP",
+                detail = "در کرنل‌هایی که BBR دارند throughput روی لینک پرافت بهتر می‌شود (RTT را کم نمی‌کند).",
+                checked = state.rootTcpBbr,
+                onChange = onRootTcp,
+            )
+            SwitchRow(
+                label = "پاک‌سازی کش هنگام اتصال",
+                detail = "drop_caches یک‌باره؛ روی گوشی‌های کم‌رم مفید است، روی گوشی مدرن تأثیر کم.",
+                checked = state.rootDropCaches,
+                onChange = onRootCaches,
+            )
+            SwitchRow(
+                label = "پروب ICMP (ping واقعی)",
+                detail = "بدون روت، اندروید اجرای ping را برای اپ‌ها می‌بندد. با روت، RTT/loss واقعی ICMP اندازه‌گیری می‌شود.",
+                checked = state.rootIcmpProbes,
+                onChange = onRootIcmp,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onApplyRoot, enabled = state.rootAvailable) { Text("اعمال") }
+                OutlinedButton(onClick = onRevertRoot) { Text("بازگردانی") }
+                OutlinedButton(onClick = onDropCaches, enabled = state.rootAvailable) { Text("drop caches") }
+            }
+            OutlinedButton(onClick = onRefreshRoot, modifier = Modifier.fillMaxWidth()) { Text("بررسی مجدد روت") }
+            state.rootLog.forEach { line -> MonoText(line) }
         }
 
         SectionCard(

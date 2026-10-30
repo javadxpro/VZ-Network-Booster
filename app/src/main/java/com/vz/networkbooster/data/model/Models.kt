@@ -1,7 +1,13 @@
 package com.vz.networkbooster.data.model
 
-/** Transport used for a reachability/latency probe. */
-enum class ProbeProtocol { TCP, UDP }
+/**
+ * Transport used for a reachability/latency probe.
+ *
+ * TCP: works for every reachable host, no privileges needed.
+ * UDP: only meaningful when the peer answers unsolicited datagrams.
+ * ICMP: real `ping`, but Android blocks the binary for apps — root only.
+ */
+enum class ProbeProtocol { TCP, UDP, ICMP }
 
 /**
  * A single measurable destination. For game traffic the practical, root-free

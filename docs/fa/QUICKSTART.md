@@ -170,6 +170,14 @@ Security Group را چک کنید).
 
 ---
 
+## اگر گوشی روت است (اختیاری)
+
+Settings → **Root mode** → «بررسی مجدد روت» → سوییچ‌ها را روشن کن. با روت:
+پروب ICMP واقعی (ping)، خاموش‌کردن Wi-Fi power save، whitelist در Doze، BBR و drop_caches.
+هنگام Disconnect همه‌چیز خودکار برمی‌گردد. جزئیات و محدودیت‌ها: [`ROOT.md`](ROOT.md).
+
+---
+
 ## عیب‌یابی سریع
 
 | نشانه | علت | راه‌حل |

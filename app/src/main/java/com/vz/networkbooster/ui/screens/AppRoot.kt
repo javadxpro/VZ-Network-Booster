@@ -98,6 +98,16 @@ fun AppRoot(viewModel: VzViewModel, onConnectRequested: () -> Unit) {
                     onSplitTunnel = viewModel::setSplitTunnel,
                     onIncludeSelf = viewModel::setIncludeSelfForMeasurement,
                     onResetIdentity = viewModel::resetDeviceIdentity,
+                    onRootEnabled = viewModel::setRootEnabled,
+                    onRootWifi = viewModel::setRootWifiPowerSave,
+                    onRootDoze = viewModel::setRootDozeWhitelist,
+                    onRootTcp = viewModel::setRootTcpBbr,
+                    onRootCaches = viewModel::setRootDropCaches,
+                    onRootIcmp = viewModel::setRootIcmpProbes,
+                    onApplyRoot = viewModel::applyRootTweaksNow,
+                    onRevertRoot = viewModel::revertRootTweaks,
+                    onRefreshRoot = viewModel::refreshRootStatus,
+                    onDropCaches = viewModel::dropCachesNow,
                 )
             }
         }

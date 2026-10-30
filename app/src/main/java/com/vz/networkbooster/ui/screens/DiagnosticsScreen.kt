@@ -53,6 +53,9 @@ fun DiagnosticsScreen(
             val targets = buildList {
                 addAll(state.activeGame?.probeTargets ?: emptyList())
                 addAll(BuiltInCatalog.referenceAnchors)
+                if (state.rootAvailable && state.rootIcmpProbes) {
+                    addAll(BuiltInCatalog.icmpAnchors)
+                }
             }
             targets.forEach { target ->
                 Row(
@@ -64,6 +67,27 @@ fun DiagnosticsScreen(
                         MonoText("${target.protocol.name} ${target.host}:${target.port}")
                     }
                     Button(onClick = { onMeasure(target) }) { Text("Run") }
+                }
+            }
+        }
+
+        if (state.rootAvailable) {
+            SectionCard(
+                title = "ICMP (root)",
+                subtitle = "ping واقعی فقط با روت اجرا می‌شود؛ بازی‌ها معمولاً به ICMP پاسخ نمی‌دهند، " +
+                    "ولی رله و مسیر شبکه را دقیق نشان می‌دهد.",
+            ) {
+                BuiltInCatalog.icmpAnchors.forEach { target ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(target.label, style = MaterialTheme.typography.bodyMedium)
+                            MonoText("ICMP ${target.host}")
+                        }
+                        Button(onClick = { onMeasure(target) }) { Text("Run") }
+                    }
                 }
             }
         }

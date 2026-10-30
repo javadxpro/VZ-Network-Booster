@@ -168,7 +168,7 @@ fun GamesScreen(
                     OutlinedTextField(
                         value = protocol,
                         onValueChange = { protocol = it.uppercase() },
-                        label = { Text("Protocol (TCP/UDP)") },
+                        label = { Text("Protocol (TCP/UDP/ICMP)") },
                     )
                 }
             },

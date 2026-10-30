@@ -27,6 +27,7 @@ import java.net.Socket
  */
 class QualityTester(
     private val interProbeDelayMs: Long = 120L,
+    private val icmpPinger: IcmpPinger? = null,
 ) {
 
     suspend fun measure(
@@ -38,6 +39,10 @@ class QualityTester(
         val attempts = samples.coerceIn(1, 60)
         val rtts = ArrayList<Double>(attempts)
         var lastError: String? = null
+
+        if (target.protocol == ProbeProtocol.ICMP) {
+            return@withContext icmpMeasure(target, attempts, timeoutMs, path)
+        }
 
         val address: InetAddress? = runCatching { InetAddress.getByName(target.host) }
             .onFailure { lastError = "DNS: ${it.message ?: it.javaClass.simpleName}" }
@@ -96,6 +101,65 @@ class QualityTester(
             lossPercent = QualityStats.round1(QualityStats.lossPercent(sent, received)),
             timestampMs = System.currentTimeMillis(),
             note = note,
+        )
+    }
+
+    private suspend fun icmpMeasure(
+        target: ProbeTarget,
+        attempts: Int,
+        timeoutMs: Int,
+        path: String,
+    ): QualityReport {
+        val pinger = icmpPinger
+            ?: return QualityReport(
+                targetLabel = target.label,
+                host = target.host,
+                port = target.port,
+                protocol = ProbeProtocol.ICMP,
+                path = path,
+                attempted = attempts,
+                received = 0,
+                minMs = null,
+                avgMs = null,
+                maxMs = null,
+                jitterMs = null,
+                lossPercent = 100.0,
+                timestampMs = System.currentTimeMillis(),
+                note = "ICMP requires root: Android blocks the ping binary for normal apps",
+            )
+        val timeoutSeconds = (timeoutMs / 1_000).coerceIn(1, 10)
+        val result = pinger.ping(target.host, attempts, timeoutSeconds)
+            ?: return QualityReport(
+                targetLabel = target.label,
+                host = target.host,
+                port = target.port,
+                protocol = ProbeProtocol.ICMP,
+                path = path,
+                attempted = attempts,
+                received = 0,
+                minMs = null,
+                avgMs = null,
+                maxMs = null,
+                jitterMs = null,
+                lossPercent = 100.0,
+                timestampMs = System.currentTimeMillis(),
+                note = "ICMP probe failed: no root shell or host unreachable",
+            )
+        return QualityReport(
+            targetLabel = target.label,
+            host = target.host,
+            port = target.port,
+            protocol = ProbeProtocol.ICMP,
+            path = path,
+            attempted = result.transmitted,
+            received = result.received,
+            minMs = result.minMs?.let(QualityStats::round1),
+            avgMs = result.avgMs?.let(QualityStats::round1),
+            maxMs = result.maxMs?.let(QualityStats::round1),
+            jitterMs = QualityStats.jitterMs(result.rtts)?.let(QualityStats::round1),
+            lossPercent = QualityStats.round1(result.lossPercent),
+            timestampMs = System.currentTimeMillis(),
+            note = "ICMP via root" + (result.mdevMs?.let { ", mdev %.1f ms".format(it) } ?: ""),
         )
     }
 

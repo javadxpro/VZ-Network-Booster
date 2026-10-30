@@ -21,6 +21,12 @@ object BuiltInCatalog {
         ProbeTarget("Reference anchor (Google 8.8.8.8:443)", "8.8.8.8", 443, ProbeProtocol.TCP),
     )
 
+    /** Only usable with root: Android blocks /system/bin/ping for unprivileged apps. */
+    val icmpAnchors: List<ProbeTarget> = listOf(
+        ProbeTarget("ICMP anchor (1.1.1.1)", "1.1.1.1", 0, ProbeProtocol.ICMP),
+        ProbeTarget("ICMP anchor (8.8.8.8)", "8.8.8.8", 0, ProbeProtocol.ICMP),
+    )
+
     val games: List<GameProfile> = listOf(
         GameProfile(
             id = "pubg-mobile-global",

@@ -18,8 +18,11 @@ import com.vz.networkbooster.data.store.GameRepository
 import com.vz.networkbooster.data.store.ServerRepository
 import com.vz.networkbooster.data.store.SettingsStore
 import com.vz.networkbooster.net.QualityTester
+import com.vz.networkbooster.net.RootIcmpPinger
 import com.vz.networkbooster.net.ServerHealthChecker
 import com.vz.networkbooster.net.SmartRouter
+import com.vz.networkbooster.root.RootShell
+import com.vz.networkbooster.root.RootTweaks
 import com.vz.networkbooster.security.DeviceIdentity
 import com.vz.networkbooster.security.SecretBox
 import com.vz.networkbooster.vpn.BoosterService
@@ -50,6 +53,15 @@ data class UiState(
     val ranking: List<RouteScore> = emptyList(),
     val installedPackages: List<String> = emptyList(),
     val devicePublicKey: String = "",
+    val rootAvailable: Boolean = false,
+    val rootDetail: String = "",
+    val rootEnabled: Boolean = false,
+    val rootWifiPowerSave: Boolean = true,
+    val rootDozeWhitelist: Boolean = true,
+    val rootTcpBbr: Boolean = false,
+    val rootDropCaches: Boolean = false,
+    val rootIcmpProbes: Boolean = true,
+    val rootLog: List<String> = emptyList(),
     val busy: String? = null,
     val optimizerRunning: Boolean = false,
     val optimizerLog: List<String> = emptyList(),
@@ -66,7 +78,9 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
     private val identity = DeviceIdentity(application)
     private val gameRepo = GameRepository(application.filesDir)
     private val serverRepo = ServerRepository(application.filesDir)
-    private val tester = QualityTester()
+    private val rootShell = RootShell
+    private val rootTweaks = RootTweaks(application, rootShell)
+    private val tester = QualityTester(icmpPinger = RootIcmpPinger(rootShell))
     private val healthChecker = ServerHealthChecker()
 
     private val _state = MutableStateFlow(UiState())
@@ -94,9 +108,16 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
                     includeSelfForMeasurement = settings.includeSelfForMeasurement,
                     installedPackages = launched,
                     devicePublicKey = identity.publicKeyBase64(),
+                    rootEnabled = settings.rootEnabled,
+                    rootWifiPowerSave = settings.rootWifiPowerSave,
+                    rootDozeWhitelist = settings.rootDozeWhitelist,
+                    rootTcpBbr = settings.rootTcpBbr,
+                    rootDropCaches = settings.rootDropCaches,
+                    rootIcmpProbes = settings.rootIcmpProbes,
                 )
             }
             recomputeRanking()
+            refreshRootStatus()
         }
     }
 
@@ -290,6 +311,107 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // ----------------------------------------------------------------- root
+
+    fun refreshRootStatus() {
+        viewModelScope.launch {
+            val status = rootShell.status(force = true)
+            _state.update {
+                it.copy(
+                    rootAvailable = status.available,
+                    rootDetail = status.detail,
+                    rootEnabled = if (status.available) it.rootEnabled else false,
+                )
+            }
+        }
+    }
+
+    fun setRootEnabled(enabled: Boolean) {
+        if (enabled && !_state.value.rootAvailable) {
+            _state.update { it.copy(message = "root shell not granted — open your root manager and allow this app") }
+            refreshRootStatus()
+            return
+        }
+        settings.rootEnabled = enabled
+        _state.update { it.copy(rootEnabled = enabled) }
+        if (!enabled) revertRootTweaks()
+    }
+
+    fun setRootWifiPowerSave(enabled: Boolean) {
+        settings.rootWifiPowerSave = enabled
+        _state.update { it.copy(rootWifiPowerSave = enabled) }
+    }
+
+    fun setRootDozeWhitelist(enabled: Boolean) {
+        settings.rootDozeWhitelist = enabled
+        _state.update { it.copy(rootDozeWhitelist = enabled) }
+    }
+
+    fun setRootTcpBbr(enabled: Boolean) {
+        settings.rootTcpBbr = enabled
+        _state.update { it.copy(rootTcpBbr = enabled) }
+    }
+
+    fun setRootDropCaches(enabled: Boolean) {
+        settings.rootDropCaches = enabled
+        _state.update { it.copy(rootDropCaches = enabled) }
+    }
+
+    fun setRootIcmpProbes(enabled: Boolean) {
+        settings.rootIcmpProbes = enabled
+        _state.update { it.copy(rootIcmpProbes = enabled) }
+    }
+
+    fun applyRootTweaksNow() {
+        if (!_state.value.rootAvailable) {
+            _state.update { it.copy(message = "root not available") }
+            return
+        }
+        viewModelScope.launch {
+            _state.update { it.copy(busy = "applying root tweaks", rootLog = emptyList()) }
+            val steps = rootTweaks.apply(currentRootConfig())
+            _state.update {
+                it.copy(
+                    busy = null,
+                    rootLog = steps.map { step -> (if (step.ok) "✔ " else "✘ ") + step.title + " — " + step.detail },
+                    message = "root tweaks applied (${steps.count { step -> step.ok }}/${steps.size})",
+                )
+            }
+        }
+    }
+
+    fun revertRootTweaks() {
+        viewModelScope.launch {
+            val steps = rootTweaks.revert()
+            if (steps.isEmpty()) return@launch
+            _state.update {
+                it.copy(
+                    rootLog = steps.map { step -> (if (step.ok) "✔ " else "✘ ") + step.title + " — " + step.detail },
+                    message = "root state restored",
+                )
+            }
+        }
+    }
+
+    fun dropCachesNow() {
+        viewModelScope.launch {
+            val step = rootTweaks.dropCachesNow()
+            _state.update {
+                it.copy(
+                    rootLog = it.rootLog + ((if (step.ok) "✔ " else "✘ ") + step.title + " — " + step.detail),
+                    message = if (step.ok) "caches dropped" else "drop_caches failed",
+                )
+            }
+        }
+    }
+
+    private fun currentRootConfig() = RootTweaks.Config(
+        wifiPowerSaveOff = _state.value.rootWifiPowerSave,
+        dozeWhitelist = _state.value.rootDozeWhitelist,
+        tcpBbr = _state.value.rootTcpBbr,
+        dropCaches = _state.value.rootDropCaches,
+    )
+
     // ----------------------------------------------------------------- vpn
 
     fun connect() {
@@ -313,6 +435,7 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
 
     fun disconnect() {
         viewModelScope.launch {
+            if (_state.value.rootEnabled) revertRootTweaks()
             VpnManager.disconnect()
             runCatching { BoosterService.stop(getApplication()) }
             _state.update { it.copy(busy = null, message = "disconnected") }
@@ -349,6 +472,12 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
         if (result.isSuccess) {
             runCatching { BoosterService.start(app) }
                 .onFailure { _state.update { s -> s.copy(message = "tunnel up but service start failed: ${it.message}") } }
+            if (_state.value.rootEnabled && _state.value.rootAvailable) {
+                val steps = rootTweaks.apply(currentRootConfig())
+                _state.update {
+                    it.copy(rootLog = steps.map { step -> (if (step.ok) "✔ " else "✘ ") + step.title + " — " + step.detail })
+                }
+            }
         }
         return result
     }
