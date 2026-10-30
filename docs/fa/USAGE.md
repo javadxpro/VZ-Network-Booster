@@ -1,5 +1,7 @@
 # نصب و استفاده
 
+> خلاصه‌ی عملی و گام‌به‌گام: [`QUICKSTART.md`](QUICKSTART.md)
+
 ## ۱) نصب APK
 
 - از Artifact گیت‌هاب: Actions → آخرین اجرای سبز → `vz-network-booster-debug-apk` → نصب روی گوشی.

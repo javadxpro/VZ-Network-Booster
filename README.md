@@ -69,6 +69,8 @@ make docker-apk
 make apk      # خروجی: dist/app-debug.apk
 ```
 
+⚡ راهنمای ۱۰ دقیقه‌ای تا اتصال واقعی: [`docs/fa/QUICKSTART.md`](docs/fa/QUICKSTART.md)
+
 راهنمای کامل: [`docs/fa/BUILD.md`](docs/fa/BUILD.md) · نحوه استفاده: [`docs/fa/USAGE.md`](docs/fa/USAGE.md) ·
 امنیت: [`docs/fa/SECURITY.md`](docs/fa/SECURITY.md)
 
