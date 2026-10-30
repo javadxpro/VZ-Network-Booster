@@ -28,3 +28,4 @@ dist/*.aab
 # Misc
 *.log
 .DS_Store
+ci/last-build.log

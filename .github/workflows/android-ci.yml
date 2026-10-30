@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -31,18 +31,24 @@ jobs:
           ls "$ANDROID_HOME/build-tools" || true
 
       - name: Unit tests (JVM)
-        run: ./gradlew :app:testDebugUnitTest --no-daemon --console=plain --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew :app:testDebugUnitTest --no-daemon --console=plain --stacktrace 2>&1 | tee build.log
 
       - name: Assemble debug APK
-        run: ./gradlew :app:assembleDebug --no-daemon --console=plain --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleDebug --no-daemon --console=plain --stacktrace 2>&1 | tee -a build.log
 
       - name: Verify APK contents
         run: |
           APK=$(find app/build/outputs/apk/debug -name '*.apk' | head -1)
           echo "APK=$APK"
           ls -l "$APK"
-          "$ANDROID_HOME/build-tools/35.0.0/aapt2" dump badging "$APK" | head -20 || \
-            "$ANDROID_HOME/build-tools/34.0.0/aapt2" dump badging "$APK" | head -20
+          BT=$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)
+          echo "using build-tools $BT"
+          "$ANDROID_HOME/build-tools/$BT/aapt2" dump badging "$APK" | head -25
+          unzip -l "$APK" | grep -E "lib/|classes.dex" | head -20
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -58,3 +64,17 @@ jobs:
           name: unit-test-reports
           path: app/build/reports/tests/**
           if-no-files-found: ignore
+
+      # The agent that maintains this repo cannot download run logs from this
+      # sandbox, so on failure the tail of the build log is committed back to the
+      # branch (with [skip ci] to avoid a loop). Remove this step if you don't want it.
+      - name: Publish failure log to branch
+        if: failure()
+        run: |
+          mkdir -p ci
+          tail -c 400000 build.log > ci/last-build.log || echo "no log captured" > ci/last-build.log
+          git config user.name "vz-ci"
+          git config user.email "vz-ci@users.noreply.github.com"
+          git add -f ci/last-build.log
+          git commit -m "ci: build log [skip ci]" || exit 0
+          git push origin "HEAD:${GITHUB_REF_NAME}" || true

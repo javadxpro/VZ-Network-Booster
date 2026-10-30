@@ -1,0 +1,16 @@
+{
+  "_comment": "VZ server bundle template. Contains NO secret: the device generates its own WireGuard private key and you register the matching public key on the relay. Replace example.com values with your real relay. Never commit a filled-in bundle for a private relay.",
+  "name": "fra-01",
+  "region": "eu",
+  "endpoint": "relay.example.com:51820",
+  "serverPublicKey": "REPLACE_WITH_RELAY_PUBLIC_KEY_BASE64",
+  "address": "10.66.0.2/32",
+  "allowedIps": "0.0.0.0/0, ::/0",
+  "dns": "1.1.1.1",
+  "mtu": 1420,
+  "capacity": 150,
+  "dedicated": false,
+  "probeHost": "relay.example.com",
+  "probePort": 443,
+  "notes": "probeHost/probePort are optional; without them the relay health stays 'unverified'."
+}
