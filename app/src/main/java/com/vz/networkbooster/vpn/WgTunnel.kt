@@ -4,12 +4,15 @@ import com.wireguard.android.backend.Tunnel
 import com.wireguard.config.Config
 
 /**
- * Tunnel handle handed to the WireGuard backend. The backend calls
+ * Tunnel handle handed to the WireGuard backend.
+ *
+ * The upstream `Tunnel` interface is minimal (`getName`, `onStateChange`); the
+ * configuration is passed to the backend separately and the backend calls
  * [onStateChange] whenever the tunnel goes up or down.
  */
 class WgTunnel(
     private val tunnelName: String,
-    private val wgConfig: Config,
+    val wgConfig: Config,
 ) : Tunnel {
 
     @Volatile
@@ -21,8 +24,6 @@ class WgTunnel(
     override fun onStateChange(newState: Tunnel.State) {
         lastState = newState
     }
-
-    override fun getConfig(): Config = wgConfig
 
     companion object {
         /** WireGuard interface names must match [a-zA-Z0-9_=+.-]{1,15}. */

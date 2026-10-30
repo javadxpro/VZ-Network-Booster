@@ -489,7 +489,7 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
         _state.update { it.copy(ranking = ranking) }
     }
 
-    private fun loadLaunchablePackages(): List<String> = runCatching {
+    private suspend fun loadLaunchablePackages(): List<String> = runCatching {
         val app = getApplication<Application>()
         val intent = android.content.Intent(android.content.Intent.ACTION_MAIN)
             .addCategory(android.content.Intent.CATEGORY_LAUNCHER)
