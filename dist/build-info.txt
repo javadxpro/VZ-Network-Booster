@@ -1,0 +1,81 @@
+# VZ Network Booster — debug build facts
+
+- commit: `b4359b5a4097aae48c0f3985aa2970421b7174d6`
+- built at: 2026-10-30T07:06:02Z
+- apk: app-debug.apk
+- size: 23601737 bytes
+- sha256: ab251dfb490024e5e7de43b8aee0d601f945f64fe3958bda2103585870a1ef00
+- build-tools used for inspection: 37.0.0
+
+## aapt2 badging
+```
+package: name='com.vz.networkbooster.debug' versionCode='1' versionName='0.1.0-debug' platformBuildVersionName='15' platformBuildVersionCode='35' compileSdkVersion='35' compileSdkVersionCodename='15'
+minSdkVersion:'26'
+targetSdkVersion:'35'
+uses-permission: name='android.permission.INTERNET'
+uses-permission: name='android.permission.ACCESS_NETWORK_STATE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE'
+uses-permission: name='android.permission.FOREGROUND_SERVICE_SPECIAL_USE'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='com.vz.networkbooster.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'
+application-label:'VZ Network Booster'
+application-label-af:'VZ Network Booster'
+application-label-am:'VZ Network Booster'
+application-label-ar:'VZ Network Booster'
+application-label-as:'VZ Network Booster'
+application-label-az:'VZ Network Booster'
+application-label-be:'VZ Network Booster'
+application-label-bg:'VZ Network Booster'
+application-label-bn:'VZ Network Booster'
+application-label-bs:'VZ Network Booster'
+application-label-ca:'VZ Network Booster'
+application-label-cs:'VZ Network Booster'
+application-label-da:'VZ Network Booster'
+application-label-de:'VZ Network Booster'
+application-label-el:'VZ Network Booster'
+application-label-en-AU:'VZ Network Booster'
+application-label-en-CA:'VZ Network Booster'
+application-label-en-GB:'VZ Network Booster'
+application-label-en-IN:'VZ Network Booster'
+application-label-en-XC:'VZ Network Booster'
+application-label-es:'VZ Network Booster'
+```
+
+## dex + native libraries inside the APK
+```
+ 18255892  1981-01-01 01:01   classes.dex
+      612  1981-01-01 01:01   classes10.dex
+  5538584  1981-01-01 01:01   classes11.dex
+    34652  1981-01-01 01:01   classes2.dex
+   257616  1981-01-01 01:01   classes3.dex
+    37688  1981-01-01 01:01   classes4.dex
+   113980  1981-01-01 01:01   classes5.dex
+    49056  1981-01-01 01:01   classes6.dex
+    13052  1981-01-01 01:01   classes7.dex
+    22084  1981-01-01 01:01   classes8.dex
+     9972  1981-01-01 01:01   classes9.dex
+    10096  1981-01-01 01:01   lib/arm64-v8a/libandroidx.graphics.path.so
+  3365264  1981-01-01 01:01   lib/arm64-v8a/libwg-go.so
+    29952  1981-01-01 01:01   lib/arm64-v8a/libwg-quick.so
+    81704  1981-01-01 01:01   lib/arm64-v8a/libwg.so
+     7252  1981-01-01 01:01   lib/armeabi-v7a/libandroidx.graphics.path.so
+  3174788  1981-01-01 01:01   lib/armeabi-v7a/libwg-go.so
+    22736  1981-01-01 01:01   lib/armeabi-v7a/libwg-quick.so
+    47076  1981-01-01 01:01   lib/armeabi-v7a/libwg.so
+     9284  1981-01-01 01:01   lib/x86/libandroidx.graphics.path.so
+  3197504  1981-01-01 01:01   lib/x86/libwg-go.so
+    31820  1981-01-01 01:01   lib/x86/libwg-quick.so
+    70896  1981-01-01 01:01   lib/x86/libwg.so
+    10760  1981-01-01 01:01   lib/x86_64/libandroidx.graphics.path.so
+  3606928  1981-01-01 01:01   lib/x86_64/libwg-go.so
+    31504  1981-01-01 01:01   lib/x86_64/libwg-quick.so
+    93248  1981-01-01 01:01   lib/x86_64/libwg.so
+```
+
+## JVM unit test results
+```
+<testsuite name="com.vz.networkbooster.WireGuardConfigBuilderTest" tests="5" skipped="0" failures="0" errors="0"
+<testsuite name="com.vz.networkbooster.ConfigImporterTest" tests="5" skipped="0" failures="0" errors="0"
+<testsuite name="com.vz.networkbooster.QualityStatsTest" tests="5" skipped="0" failures="0" errors="0"
+<testsuite name="com.vz.networkbooster.SmartRouterTest" tests="5" skipped="0" failures="0" errors="0"
+```
