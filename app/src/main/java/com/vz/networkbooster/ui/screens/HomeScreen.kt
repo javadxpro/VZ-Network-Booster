@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -36,6 +37,8 @@ fun HomeScreen(
     onSelectServer: (String) -> Unit,
     onOpenRelays: () -> Unit,
     onDirectMode: (Boolean) -> Unit,
+    onAirEnabled: (Boolean) -> Unit,
+    onAirAutoSwitch: (Boolean) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -134,6 +137,51 @@ fun HomeScreen(
                 "Mode",
                 if (state.splitTunnelGameOnly) "only selected game apps" else "full tunnel",
             )
+        }
+
+        SectionCard(
+            title = "AIR — مسیریابی تطبیقی (اختیاری)",
+            subtitle = "هر رله‌ای که probe target دارد دائماً اندازه‌گیری می‌شود. تعویض مسیر فقط وقتی انجام " +
+                "می‌شود که بهبود اندازه‌گیری‌شده از آستانه بگذرد (hysteresis + cooldown).",
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Text("فعال", style = MaterialTheme.typography.bodyMedium)
+                Switch(checked = state.airEnabled, onCheckedChange = onAirEnabled)
+            }
+            if (state.airEnabled) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text("تعویض خودکار مسیر", style = MaterialTheme.typography.bodyMedium)
+                    Switch(checked = state.airAutoSwitch, onCheckedChange = onAirAutoSwitch)
+                }
+                Text(
+                    text = state.airAction.ifBlank { "منتظر اولین چرخه‌ی اندازه‌گیری" },
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                state.airScores.take(4).forEach { (serverId, score) ->
+                    val name = state.servers.firstOrNull { it.id == serverId }?.name ?: serverId
+                    KeyValueRow(name, "score %.1f".format(score))
+                }
+                state.airLog.takeLast(4).forEach { line ->
+                    Text(
+                        text = line,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            } else {
+                Text(
+                    text = "برای معنا داشتن مقایسه، حداقل دو رله با probe target لازم است. " +
+                        "بدون probe target هیچ رله‌ای رتبه‌بندی نمی‌شود (عدد ساختگی ساخته نمی‌شود).",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
         }
 
         SectionCard(

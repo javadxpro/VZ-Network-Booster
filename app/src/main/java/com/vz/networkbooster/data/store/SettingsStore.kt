@@ -37,6 +37,15 @@ class SettingsStore(context: Context) {
         get() = prefs.getBoolean(KEY_DIRECT_MODE, false)
         set(value) = prefs.edit { putBoolean(KEY_DIRECT_MODE, value) }
 
+    /** AIR — adaptive intelligent routing: measure all relays, switch when it pays off. */
+    var airEnabled: Boolean
+        get() = prefs.getBoolean(KEY_AIR_ENABLED, false)
+        set(value) = prefs.edit { putBoolean(KEY_AIR_ENABLED, value) }
+
+    var airAutoSwitch: Boolean
+        get() = prefs.getBoolean(KEY_AIR_AUTOSWITCH, true)
+        set(value) = prefs.edit { putBoolean(KEY_AIR_AUTOSWITCH, value) }
+
     // ---------------------------------------------------------------- root mode
     var rootEnabled: Boolean
         get() = prefs.getBoolean(KEY_ROOT_ENABLED, false)
@@ -80,6 +89,8 @@ class SettingsStore(context: Context) {
         const val KEY_ROOT_CACHES = "root_drop_caches"
         const val KEY_ROOT_ICMP = "root_icmp"
         const val KEY_DIRECT_MODE = "direct_mode"
+        const val KEY_AIR_ENABLED = "air_enabled"
+        const val KEY_AIR_AUTOSWITCH = "air_autoswitch"
         const val KEY_ROOT_QDISC = "root_qdisc"
     }
 }

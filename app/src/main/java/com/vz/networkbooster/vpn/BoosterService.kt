@@ -16,6 +16,7 @@ import com.vz.networkbooster.MainActivity
 import com.vz.networkbooster.R
 import com.vz.networkbooster.data.model.TunnelPhase
 import com.vz.networkbooster.data.store.SettingsStore
+import com.vz.networkbooster.net.AirRuntime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -93,6 +94,10 @@ class BoosterService : Service() {
             watchdogJob = scope.launch {
                 while (isActive) {
                     VpnManager.autoReconnectTick(settings.autoReconnect)
+                    // AIR: adaptive path evaluation (no-op unless the user enabled it).
+                    if (AirRuntime.context?.enabled == true) {
+                        runCatching { AirRuntime.tick() }
+                    }
                     VpnManager.readTrafficStats()?.let { (rx, tx) ->
                         VpnManager.publishTraffic(rx, tx)
                     }

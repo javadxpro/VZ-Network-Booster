@@ -67,6 +67,8 @@ fun AppRoot(viewModel: VzViewModel, onConnectRequested: () -> Unit) {
                     onSelectServer = viewModel::selectServer,
                     onOpenRelays = { tab = 2 },
                     onDirectMode = viewModel::setDirectMode,
+                    onAirEnabled = viewModel::setAirEnabled,
+                    onAirAutoSwitch = viewModel::setAirAutoSwitch,
                 )
 
                 1 -> GamesScreen(

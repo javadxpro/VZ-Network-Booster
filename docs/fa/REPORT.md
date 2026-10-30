@@ -110,6 +110,7 @@
 | پروفایل اختصاصی هر بازی | `GameProfile` + مخزن JSON + کاتالوگ داخلی (PUBG Global، CODM، Delta Force) | ✅ |
 | افزودن سرور جدید | ایمپورت bundle JSON یا کانفیگ wg-quick، از متن یا **از فایل** (`Choose file…`) + فرم سلامت/ظرفیت | ✅ با تست واحد (`ConfigImporterTest` — ۷ تست) |
 | ذخیره امن کلید | AES-GCM در Android Keystore (`SecretBox`)، بدون backup | ✅ |
+| **AIR (مسیریابی تطبیقی)** | `AirEngine` (EWMA + امتیاز شفاف + hysteresis + cooldown + failover + پروب تطبیقی) و `AirRuntime` (چرخه در `BoosterService`) | ✅ کد + ۱۳ تست واحد؛ رفتار روی شبکه واقعی تست نشده |
 | **حالت روت (اختیاری)** | `RootShell` (allow-list + timeout) · `RootTweaks` (Wi-Fi power save، Doze، BBR، drop_caches با بازگردانی) · `RootIcmpPinger` (ping واقعی) | ✅ کد + ۶ تست پارسر ICMP؛ اجرای واقعی روی گوشی روت‌شده تست نشده |
 | گزارش کیفیت و مقایسه direct/tunnel | مسیر در هر گزارش ثبت می‌شود (`direct` / `tunnel:<relay>`) | ✅ |
 
@@ -130,7 +131,7 @@
 
 1. `./gradlew :app:testDebugUnitTest` → ۴ کلاس، ۲۰ تست، ۰ failure:
    `QualityStatsTest` (۵)، `SmartRouterTest` (۵)، `WireGuardConfigBuilderTest` (۵)،
-   `ConfigImporterTest` (۷)، `IcmpPingParserTest` (۶).
+   `ConfigImporterTest` (۷)، `IcmpPingParserTest` (۶)، `AirEngineTest` (۱۳).
 2. `./gradlew :app:assembleDebug` → APK دیباگ ساخته شد.
 3. `aapt2 dump badging` → `package=com.vz.networkbooster.debug`, `minSdkVersion=26`, `targetSdkVersion=35`,
    `compileSdkVersion=35`, مجوزها همان‌هایی است که در manifest تعریف شد.

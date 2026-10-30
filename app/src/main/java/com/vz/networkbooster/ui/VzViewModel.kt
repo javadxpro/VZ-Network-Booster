@@ -17,6 +17,7 @@ import com.vz.networkbooster.data.model.TunnelPhase
 import com.vz.networkbooster.data.store.GameRepository
 import com.vz.networkbooster.data.store.ServerRepository
 import com.vz.networkbooster.data.store.SettingsStore
+import com.vz.networkbooster.net.AirRuntime
 import com.vz.networkbooster.net.QualityTester
 import com.vz.networkbooster.net.RootIcmpPinger
 import com.vz.networkbooster.net.ServerHealthChecker
@@ -64,6 +65,11 @@ data class UiState(
     val rootQdisc: Boolean = false,
     val directMode: Boolean = false,
     val rootLog: List<String> = emptyList(),
+    val airEnabled: Boolean = false,
+    val airAutoSwitch: Boolean = true,
+    val airLog: List<String> = emptyList(),
+    val airScores: List<Pair<String, Double>> = emptyList(),
+    val airAction: String = "",
     val busy: String? = null,
     val optimizerRunning: Boolean = false,
     val optimizerLog: List<String> = emptyList(),
@@ -117,11 +123,15 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
                     rootDropCaches = settings.rootDropCaches,
                     rootIcmpProbes = settings.rootIcmpProbes,
                     rootQdisc = settings.rootQdisc,
+                    airEnabled = settings.airEnabled,
+                    airAutoSwitch = settings.airAutoSwitch,
                     directMode = settings.directMode,
                 )
             }
             recomputeRanking()
             refreshRootStatus()
+            configureAir()
+            startAirScoreTicker()
         }
     }
 
@@ -241,6 +251,7 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
             recomputeRanking()
+            configureAir()
         }
     }
 
@@ -258,6 +269,7 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
             recomputeRanking()
+            configureAir()
         }
     }
 
@@ -313,6 +325,60 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
                 message = "new device key generated — re-register the public key on every relay",
             )
         }
+    }
+
+    // ------------------------------------------------------------------ AIR
+
+    private fun configureAir() {
+        val snapshot = _state.value
+        AirRuntime.context = AirRuntime.Context(
+            enabled = snapshot.airEnabled,
+            candidates = snapshot.servers,
+            activeServerId = snapshot.activeServerId,
+            autoSwitch = snapshot.airAutoSwitch,
+        )
+        AirRuntime.onLog = { line ->
+            _state.update { it.copy(airLog = (it.airLog + line).takeLast(25)) }
+        }
+        AirRuntime.switchTo = { server -> connectInternal(server).isSuccess }
+    }
+
+    /** Keeps the visible scores fresh while the screen is open; the actual loop runs in the service. */
+    private fun startAirScoreTicker() {
+        viewModelScope.launch {
+            while (true) {
+                if (_state.value.airEnabled) {
+                    val scores = AirRuntime.scoresSnapshot()
+                    val action = AirRuntime.lastDecision?.let { decision ->
+                        "${decision.action} · active ${"%.1f".format(decision.currentScore)} · best ${"%.1f".format(decision.bestScore)}"
+                    } ?: "waiting for the first probe cycle"
+                    _state.update { it.copy(airScores = scores, airAction = action) }
+                }
+                delay(3_000)
+            }
+        }
+    }
+
+    fun setAirEnabled(enabled: Boolean) {
+        settings.airEnabled = enabled
+        _state.update { it.copy(airEnabled = enabled) }
+        if (!enabled) AirRuntime.reset()
+        configureAir()
+        _state.update {
+            it.copy(
+                message = if (enabled) {
+                    "AIR فعال شد — رله‌های دارای probe target اندازه‌گیری و مقایسه می‌شوند"
+                } else {
+                    "AIR خاموش شد"
+                },
+            )
+        }
+    }
+
+    fun setAirAutoSwitch(enabled: Boolean) {
+        settings.airAutoSwitch = enabled
+        _state.update { it.copy(airAutoSwitch = enabled) }
+        configureAir()
     }
 
     // ----------------------------------------------------------------- root
@@ -498,6 +564,7 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
     fun disconnect() {
         viewModelScope.launch {
             if (_state.value.rootEnabled) revertRootTweaks()
+            AirRuntime.activePathId = null
             VpnManager.disconnect()
             runCatching { BoosterService.stop(getApplication()) }
             _state.update { it.copy(busy = null, message = "disconnected") }
@@ -532,6 +599,7 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
             )
         )
         if (result.isSuccess) {
+            AirRuntime.activePathId = server.id
             runCatching { BoosterService.start(app) }
                 .onFailure { _state.update { s -> s.copy(message = "tunnel up but service start failed: ${it.message}") } }
             if (_state.value.rootEnabled && _state.value.rootAvailable) {
