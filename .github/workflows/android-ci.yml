@@ -31,14 +31,10 @@ jobs:
           ls "$ANDROID_HOME/build-tools" || true
 
       - name: Unit tests (JVM)
-        run: |
-          set -o pipefail
-          ./gradlew :app:testDebugUnitTest --no-daemon --console=plain --stacktrace 2>&1 | tee build.log
+        run: scripts/ci-gradle.sh :app:testDebugUnitTest
 
       - name: Assemble debug APK
-        run: |
-          set -o pipefail
-          ./gradlew :app:assembleDebug --no-daemon --console=plain --stacktrace 2>&1 | tee -a build.log
+        run: scripts/ci-gradle.sh :app:assembleDebug
 
       - name: Verify APK contents
         run: |
