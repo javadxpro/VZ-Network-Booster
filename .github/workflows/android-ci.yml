@@ -100,7 +100,6 @@ jobs:
             echo
             echo "## services declared in the merged manifest"
             echo '```'
-            "$ANDROID_HOME/build-tools/$BT/aapt2" dump xmltree "$ANDROID_HOME"/../noop 2>/dev/null || true
             "$ANDROID_HOME/build-tools/$BT/aapt2" dump xmltree --file AndroidManifest.xml "$APK" | grep -E "E: service|E: activity|GoBackend|BIND_VPN_SERVICE|foregroundServiceType|specialUse" | head -20
             echo '```'
             echo
