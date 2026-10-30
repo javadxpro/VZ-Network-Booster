@@ -1,10 +1,10 @@
 # VZ Network Booster — debug build facts
 
-- commit: `c1e6d89d27af31139faa283b78b29dc936f5c138`
-- built at: 2026-10-30T10:19:13Z
+- commit: `e7c1ffbad56aee158933b5d389a9c92020d2cced`
+- built at: 2026-10-30T10:33:33Z
 - apk: app-debug.apk
-- size: 23650948 bytes
-- sha256: 11725b8b70eb9273c5eeb3d1ffd3c74513a45bbd95196d744c0a23eb20f4442b
+- size: 23683716 bytes
+- sha256: 4d17ac5b7ecc3973e7f5fc5e430d5d99c78fdf0b4f36c49ebb76ef28e38cc075
 - build-tools used for inspection: 37.0.0
 
 ## aapt2 badging
@@ -49,10 +49,10 @@ application-label-es:'VZ Network Booster'
   5538584  1981-01-01 01:01   classes12.dex
     34652  1981-01-01 01:01   classes2.dex
     35092  1981-01-01 01:01   classes3.dex
-   313036  1981-01-01 01:01   classes4.dex
+   359848  1981-01-01 01:01   classes4.dex
     37996  1981-01-01 01:01   classes5.dex
-   142532  1981-01-01 01:01   classes6.dex
-    54200  1981-01-01 01:01   classes7.dex
+   153492  1981-01-01 01:01   classes6.dex
+    55268  1981-01-01 01:01   classes7.dex
     13052  1981-01-01 01:01   classes8.dex
     22084  1981-01-01 01:01   classes9.dex
     10096  1981-01-01 01:01   lib/arm64-v8a/libandroidx.graphics.path.so
@@ -88,9 +88,9 @@ application-label-es:'VZ Network Booster'
 ```
 zipalign: OK
 V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: 4dc692ce4c9264be81f7417583103c7890654ec6e613ead7567568902306e2c3
-V2 Signer: certificate SHA-1 digest: 029b34576eab9f76b4ddf053dfeeb9314063b158
-V2 Signer: certificate MD5 digest: 32909bcc40bc806f96c79a02f69d215b
+V2 Signer: certificate SHA-256 digest: 5f5ad27833f528a91c47ed6ee5f2a6b6788f9e1cd477583b51a283d9517d088f
+V2 Signer: certificate SHA-1 digest: 2a7b49c44691c71bb7e78173558d28af11e0cab8
+V2 Signer: certificate MD5 digest: fc9044448612d33615da85a91417f979
 ```
 
 ## JVM unit test results
@@ -100,4 +100,5 @@ V2 Signer: certificate MD5 digest: 32909bcc40bc806f96c79a02f69d215b
 <testsuite name="com.vz.networkbooster.ConfigImporterTest" tests="7" skipped="0" failures="0" errors="0"
 <testsuite name="com.vz.networkbooster.QualityStatsTest" tests="5" skipped="0" failures="0" errors="0"
 <testsuite name="com.vz.networkbooster.SmartRouterTest" tests="5" skipped="0" failures="0" errors="0"
+<testsuite name="com.vz.networkbooster.AirEngineTest" tests="13" skipped="0" failures="0" errors="0"
 ```
