@@ -1,5 +1,7 @@
 package com.vz.networkbooster.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,8 +24,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import com.vz.networkbooster.data.importx.ConfigImporter
 import com.vz.networkbooster.ui.Format
 import com.vz.networkbooster.ui.UiState
 import com.vz.networkbooster.ui.components.HealthChip
@@ -40,6 +44,26 @@ fun ServersScreen(
     onRefreshHealth: () -> Unit,
 ) {
     var showImport by remember { mutableStateOf(false) }
+    var importText by remember { mutableStateOf("") }
+    var importName by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val configFilePicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            val text = runCatching {
+                context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+            }.getOrNull()
+            if (!text.isNullOrBlank() && text.length <= 512_000) {
+                importText = text
+                if (importName.isBlank()) {
+                    importName = (uri.lastPathSegment ?: "imported relay")
+                        .substringAfterLast('/')
+                        .substringBeforeLast('.')
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -108,32 +132,48 @@ fun ServersScreen(
     }
 
     if (showImport) {
-        var text by remember { mutableStateOf("") }
-        var name by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { showImport = false },
             title = { Text("Add relay") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
                     OutlinedTextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        label = { Text("Server bundle JSON or wg-quick config") },
-                        modifier = Modifier.fillMaxWidth().height(220.dp),
+                        value = importName,
+                        onValueChange = { importName = it },
+                        label = { Text("Name") },
+                    )
+                    OutlinedTextField(
+                        value = importText,
+                        onValueChange = { importText = it },
+                        label = { Text("Server bundle JSON or client wg-quick config") },
+                        modifier = Modifier.fillMaxWidth().height(200.dp),
                         textStyle = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
                     )
+                    OutlinedButton(
+                        onClick = { configFilePicker.launch(arrayOf("*/*")) },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) { Text("Choose file… (.conf / .json)") }
+                    if (ConfigImporter.looksLikeServerConfig(importText)) {
+                        Text(
+                            text = "این فایل کانفیگ سمت سرور است. کلید خصوصی سرور را داخل گوشی نگذارید؛ " +
+                                "کلید عمومی گوشی را روی سرور ثبت کنید و رله را با bundle اضافه کنید.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
                     Text(
-                        text = "Bundle format: {\"name\":\"fra-01\",\"endpoint\":\"relay.example.com:51820\"," +
-                            "\"serverPublicKey\":\"…\",\"address\":\"10.66.0.2/32\",\"region\":\"eu\",\"capacity\":150}",
+                        text = "Bundle: {\"name\":\"fra-01\",\"endpoint\":\"relay.example.com:51820\"," +
+                            "\"serverPublicKey\":\"…\",\"address\":\"10.66.0.2/32\",\"region\":\"eu\"}",
                         style = MaterialTheme.typography.labelSmall,
                     )
                 }
             },
             confirmButton = {
                 TextButton(onClick = {
-                    onImport(text, name)
+                    onImport(importText, importName)
                     showImport = false
+                    importText = ""
+                    importName = ""
                 }) { Text("Import") }
             },
             dismissButton = { TextButton(onClick = { showImport = false }) { Text("Cancel") } },

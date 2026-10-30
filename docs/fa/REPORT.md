@@ -108,7 +108,7 @@
 | Split Tunneling و انتخاب بازی | `IncludedApplications` از پکیج‌های پروفایل بازی فعال | ✅ |
 | Auto Reconnect | Watchdog هر ۵ ثانیه + backoff نمایی (۲s→۳۰s) در `VpnManager.autoReconnectTick` | ✅ |
 | پروفایل اختصاصی هر بازی | `GameProfile` + مخزن JSON + کاتالوگ داخلی (PUBG Global، CODM، Delta Force) | ✅ |
-| افزودن سرور جدید | ایمپورت bundle JSON یا کانفیگ wg-quick + فرم سلامت/ظرفیت | ✅ با تست واحد (`ConfigImporterTest`) |
+| افزودن سرور جدید | ایمپورت bundle JSON یا کانفیگ wg-quick، از متن یا **از فایل** (`Choose file…`) + فرم سلامت/ظرفیت | ✅ با تست واحد (`ConfigImporterTest` — ۷ تست) |
 | ذخیره امن کلید | AES-GCM در Android Keystore (`SecretBox`)، بدون backup | ✅ |
 | گزارش کیفیت و مقایسه direct/tunnel | مسیر در هر گزارش ثبت می‌شود (`direct` / `tunnel:<relay>`) | ✅ |
 
@@ -149,6 +149,12 @@
   roaming در عمل سنجیده نشده. کیفیت مسیر (پینگ/جیتر/لات) روی شبکه واقعی بازی اندازه‌گیری نشده است.
 - **Play Store**: مجوز `QUERY_ALL_PACKAGES` استفاده نشده (به‌جایش `<queries>` برای launcher)، اما
   Foreground Service از نوع `specialUse` در Google Play نیاز به فرم توجیه دارد. این مورد بررسی حقوقی/انتشار نشده.
+
+### ابزارهای عملیاتی added
+
+- `scripts/relay-setup.sh` — ساخت رله جدید روی VPS (کلیدها، NAT، forwarding، JSON باندل).
+- `scripts/server-to-bundle.sh` — رله‌ی موجود: تولید باندل از `wg0.conf` + ثبت peer گوشی (`--apply`).
+- ایمپورت فایل: `ConfigImporter.looksLikeServerConfig` کانفیگ سمت سرور را تشخیص می‌دهد و رد می‌کند.
 
 ## ۸. گام‌های بعدی پیشنهادی
 

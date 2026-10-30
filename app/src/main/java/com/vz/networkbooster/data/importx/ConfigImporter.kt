@@ -67,9 +67,31 @@ object ConfigImporter {
         return Imported(server, warnings = warnings)
     }
 
+    /**
+     * True when the text looks like the *relay's own* wg0.conf rather than a
+     * client config: relay configs listen on a port and run NAT commands, and
+     * their private key must never end up on a phone.
+     */
+    fun looksLikeServerConfig(text: String): Boolean {
+        val lower = text.lowercase()
+        return lower.contains("listenport") ||
+            lower.contains("postup") ||
+            lower.contains("postdown") ||
+            lower.contains("saveconfig")
+    }
+
+    const val SERVER_CONFIG_HINT =
+        "این فایل، کانفیگ سمت سرور (رله) است: ListenPort/PostUp دارد. کلید خصوصی سرور را " +
+            "هرگز داخل گوشی نگذارید. به‌جایش کلید عمومی گوشی را روی سرور ثبت کنید و رله را با " +
+            "یک «سرور باندل» اضافه کنید (endpoint + کلید عمومی سرور + آدرس گوشی). " +
+            "راهنما: config/relay-setup-example.md یا scripts/server-to-bundle.sh"
+
     fun parseWgQuick(text: String, id: String, fallbackName: String): Imported {
         if (!text.contains("[Interface]", ignoreCase = true) || !text.contains("[Peer]", ignoreCase = true)) {
             return Imported(null, error = "not a wg-quick config (missing [Interface]/[Peer])")
+        }
+        if (looksLikeServerConfig(text)) {
+            return Imported(null, error = SERVER_CONFIG_HINT)
         }
         var section = ""
         var privateKey: String? = null

@@ -50,6 +50,33 @@ sudo bash /root/relay-setup.sh --name fra-01 --region eu --capacity 150
 
 ---
 
+---
+
+## اگر همین حالا یک فایل WireGuard داری: کدام نوع است؟
+
+فایل را باز کن و ببین `Endpoint` دارد یا `ListenPort`:
+
+| نشانه در فایل | نوع فایل | مسیر درست |
+| --- | --- | --- |
+| `Endpoint = host:port` دارد، `ListenPort` ندارد | **کانفیگ کلاینت** (معمولاً از ارائه‌دهنده/شرکت) | Relays → Add relay → **Choose file…** → فایل را انتخاب کن → Import → Connect. همین. |
+| `ListenPort` و/یا `PostUp/PostDown` دارد و `Endpoint` ندارد | **کانفیگ سرور (رله)** | کلید خصوصی سرور را **هرگز** داخل گوشی نگذار. اسکریپت زیر را روی سرور بزن، سپس bundle را در اپ بچسبان. |
+
+برای حالت دوم، روی سرور:
+
+```bash
+scp scripts/server-to-bundle.sh root@SERVER_IP:/root/
+ssh root@SERVER_IP
+# ۱) کلید عمومی گوشی: اپ → Settings → Device identity → Copy public key
+sudo bash /root/server-to-bundle.sh --name fra-01 --region eu \
+     --device-public-key <DEVICE_PUBLIC_KEY> --apply
+```
+
+خروجی: یک JSON (که در اپ می‌چسبانی) و ثبت peer گوشی روی رله (`wg set … && wg-quick save`).
+اسکریپت هیچ تغییری در ساختار کانفیگ سرور نمی‌دهد و کلید خصوصی سرور را چاپ نمی‌کند.
+
+اگر اشتباهی کانفیگ سرور را در اپ بچسبانی، اپ آن را رد می‌کند و همین توضیح را نشان می‌دهد
+(باگ/خطای مبهم نمی‌بینی).
+
 ## گام ۲ — کلید عمومی گوشی را بردارید
 
 اپ → تب **Settings** → بخش **Device identity** → دکمه‌ی **Copy public key**.

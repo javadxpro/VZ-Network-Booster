@@ -86,6 +86,7 @@ app/src/main/java/com/vz/networkbooster/
 docker/       محیط Build قابل تکرار
 scripts/      bootstrap-tools.sh, build-apk.sh, verify-toolchain.sh
 config/       نمونه bundle رله + راهنمای راه‌اندازی سرور (بدون راز)
+scripts/      relay-setup.sh (سرور جدید) · server-to-bundle.sh (سرور موجود) · build/verify
 ```
 
 ## ابزارها (نسخه‌های قفل‌شده)

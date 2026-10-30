@@ -19,7 +19,8 @@ APK دیباگ است (امضای debug، `applicationId` با پسوند `.debu
 1. روی سرور: `wg genkey`/`wg pubkey` و `wg-quick up wg0`.
 2. در اپ: Settings → Device identity → *Copy public key*.
 3. روی سرور: `wg set wg0 peer <DEVICE_PUBLIC_KEY> allowed-ips 10.66.0.2/32`.
-4. در اپ: Relays → Add relay → چسباندن bundle (JSON) یا کانفیگ wg-quick.
+4. در اپ: Relays → Add relay → چسباندن bundle (JSON) یا کانفیگ کلاینت wg-quick،
+   یا دکمه‌ی **Choose file…** برای انتخاب فایل `.conf` / `.json` از حافظه‌ی گوشی.
 
 ## ۳) استفاده روزمره
 
