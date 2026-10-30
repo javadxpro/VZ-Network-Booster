@@ -1,0 +1,52 @@
+name: dependency-probe
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/probe.yml"]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe repositories
+        run: |
+          mkdir -p ci
+          {
+            echo "## wireguard tunnel maven-metadata (Maven Central)"
+            curl -sS --max-time 30 https://repo1.maven.org/maven2/com/wireguard/android/tunnel/maven-metadata.xml || echo "FAILED"
+            echo
+            echo "## search.maven.org g:com.wireguard.android"
+            curl -sS --max-time 30 "https://search.maven.org/solrsearch/select?q=g:%22com.wireguard.android%22&rows=40&wt=json" || echo "FAILED"
+            echo
+            echo "## HTTP status probes"
+            for u in \
+              https://repo1.maven.org/maven2/com/wireguard/android/tunnel/1.0.20230706/tunnel-1.0.20230706.pom \
+              https://repo1.maven.org/maven2/com/wireguard/android/tunnel/1.0.20231018/tunnel-1.0.20231018.pom \
+              https://repo1.maven.org/maven2/com/wireguard/android/tunnel/1.0.20260315/tunnel-1.0.20260315.pom \
+              https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/8.7.3/gradle-8.7.3.pom \
+              https://dl.google.com/dl/android/maven2/androidx/compose/compose-bom/2024.10.00/compose-bom-2024.10.00.pom \
+              https://dl.google.com/dl/android/maven2/androidx/compose/material/material-icons-core/1.7.4/material-icons-core-1.7.4.pom \
+              https://dl.google.com/dl/android/maven2/androidx/activity/activity-compose/1.9.3/activity-compose-1.9.3.pom \
+              https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-runtime-compose/2.8.7/lifecycle-runtime-compose-2.8.7.pom \
+              https://dl.google.com/dl/android/maven2/androidx/core/core-ktx/1.13.1/core-ktx-1.13.1.pom \
+              https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin/2.0.21/kotlin-gradle-plugin-2.0.21.pom \
+              https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-compose-compiler-plugin-embeddable/2.0.21/kotlin-compose-compiler-plugin-embeddable-2.0.21.pom \
+              https://services.gradle.org/distributions/gradle-8.9-bin.zip.sha256 ; do
+              code=$(curl -sS -o /dev/null --max-time 20 -w "%{http_code}" "$u" || echo "ERR")
+              echo "$code  $u"
+            done
+            echo
+            echo "## gradle 8.9 sha256"
+            curl -sS --max-time 20 https://services.gradle.org/distributions/gradle-8.9-bin.zip.sha256 || echo FAILED
+            echo
+            echo "## android sdk packages on runner"
+            ls "$ANDROID_HOME/platforms" 2>/dev/null
+            ls "$ANDROID_HOME/build-tools" 2>/dev/null
+          } > ci/dependency-probe.txt 2>&1
+          git config user.name "vz-ci"
+          git config user.email "vz-ci@users.noreply.github.com"
+          git add -f ci/dependency-probe.txt
+          git commit -m "ci: dependency probe [skip ci]" || exit 0
+          git push origin "HEAD:${GITHUB_REF_NAME}" || true
