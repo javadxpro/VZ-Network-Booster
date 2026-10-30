@@ -7,8 +7,12 @@ activityCompose = "1.9.3"
 composeBom = "2024.10.00"
 coroutines = "1.8.1"
 # WireGuard for Android, official upstream (git.zx2c4.com/wireguard-android, mirrored on GitHub).
-# Tag 1.0.20231018 is built with compileSdk 34 / Java 17 and ships prebuilt wg-go native libs.
-wireguard = "1.0.20231018"
+# Only versions published to Maven Central are usable; verified against
+# https://repo1.maven.org/maven2/com/wireguard/android/tunnel/maven-metadata.xml:
+#   1.0.20210211, 1.0.20210926, 1.0.20211029, 1.0.20230321, 1.0.20230405,
+#   1.0.20230427, 1.0.20230706, 1.0.20250531, 1.0.20251231, 1.0.20260102
+# 1.0.20231018 exists as a git tag but was never published to Maven Central.
+wireguard = "1.0.20260102"
 junit = "4.13.2"
 json = "20240303"
 
