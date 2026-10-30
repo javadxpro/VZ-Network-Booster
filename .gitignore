@@ -1,0 +1,30 @@
+# Build output
+build/
+app/build/
+.gradle/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Secrets: never commit keys, WireGuard configs or keystores
+*.jks
+*.keystore
+keystore.properties
+*.wgconf
+*.conf
+secrets/
+private/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Dist artifacts produced by CI
+dist/*.apk
+dist/*.aab
+
+# Misc
+*.log
+.DS_Store
