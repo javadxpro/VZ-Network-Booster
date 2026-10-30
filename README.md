@@ -14,6 +14,7 @@
 | تست‌های واحد JVM | ✅ ۲۰ تست / ۰ خطا | `dist/build-info.txt` |
 | APK دیباگ | ✅ ساخته شده — ۲۳٫۶ MB | [`dist/vz-network-booster-debug.apk`](dist/vz-network-booster-debug.apk) |
 | امضا و ترازبندی | ✅ `zipalign OK` + `apksigner verify` (V2، گواهی Android Debug) | `dist/build-info.txt` |
+| `VpnService` داخل APK | ✅ `GoBackend$VpnService` با `BIND_VPN_SERVICE` در manifest ادغام‌شده | `dist/build-info.txt` |
 | کتابخانه native داخل APK | ✅ `libwg-go.so` / `libwg.so` برای arm64-v8a, armeabi-v7a, x86, x86_64 | `dist/build-info.txt` |
 | محیط Build قابل تکرار | ✅ Dockerfile + bootstrap + CI | `docker/`, `scripts/` |
 | تست روی گوشی واقعی + رله واقعی | ❌ انجام نشده (بدون دستگاه و بدون سرور) | `docs/fa/REPORT.md` §۷ |

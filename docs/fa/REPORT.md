@@ -133,7 +133,12 @@
 3. `aapt2 dump badging` → `package=com.vz.networkbooster.debug`, `minSdkVersion=26`, `targetSdkVersion=35`,
    `compileSdkVersion=35`, مجوزها همان‌هایی است که در manifest تعریف شد.
 4. بررسی محتوای APK → `classes*.dex` + `lib/{arm64-v8a,armeabi-v7a,x86,x86_64}/libwg-go.so` و `libwg.so`.
-5. `zipalign -c 4` و `apksigner verify --print-certs` (در آخرین اجرا) → جزئیات در `dist/build-info.txt`.
+5. `zipalign -c 4` → OK و `apksigner verify --print-certs` → امضای V2 با گواهی Android Debug
+   (SHA-256 گواهی در `dist/build-info.txt`).
+6. `aapt2 dump xmltree AndroidManifest.xml` از APK نهایی → در manifest ادغام‌شده دو سرویس دیده می‌شود:
+   `BoosterService` با `foregroundServiceType=0x40000000` (`specialUse`) و
+   `com.wireguard.android.backend.GoBackend$VpnService` با `android.permission.BIND_VPN_SERVICE`.
+   یعنی `VpnService` واقعی داخل APK هست، نه فقط در سورس.
 
 ## ۷. آنچه تست نشد (شفاف)
 
