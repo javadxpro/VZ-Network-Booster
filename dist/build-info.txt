@@ -1,10 +1,10 @@
 # VZ Network Booster — debug build facts
 
-- commit: `b4359b5a4097aae48c0f3985aa2970421b7174d6`
-- built at: 2026-10-30T07:06:02Z
+- commit: `163276693eca14871e651a0c04ea3145dddb9add`
+- built at: 2026-10-30T07:10:11Z
 - apk: app-debug.apk
 - size: 23601737 bytes
-- sha256: ab251dfb490024e5e7de43b8aee0d601f945f64fe3958bda2103585870a1ef00
+- sha256: 92832570bfa6d456abd809068465c65228bed314be7e97c41889d722ac119dea
 - build-tools used for inspection: 37.0.0
 
 ## aapt2 badging
@@ -70,6 +70,15 @@ application-label-es:'VZ Network Booster'
   3606928  1981-01-01 01:01   lib/x86_64/libwg-go.so
     31504  1981-01-01 01:01   lib/x86_64/libwg-quick.so
     93248  1981-01-01 01:01   lib/x86_64/libwg.so
+```
+
+## signature and alignment
+```
+zipalign: OK
+V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
+V2 Signer: certificate SHA-256 digest: fed63ad661335670be56940d4ee6d5ca7fe1e6b0898b7f371e1159ed6b9a2bbe
+V2 Signer: certificate SHA-1 digest: 9c183cec115770f35832c6186cf6940bd1766eb7
+V2 Signer: certificate MD5 digest: 103c406a7c1ba07455dbde29b53aed0f
 ```
 
 ## JVM unit test results
