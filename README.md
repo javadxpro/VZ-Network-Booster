@@ -8,15 +8,27 @@
 
 ## وضعیت ساخت (Build status)
 
-| مورد | وضعیت |
-| --- | --- |
-| سورس کامل (Kotlin + Jetpack Compose) | ✅ در همین مخزن |
-| تست‌های واحد JVM | ✅ در GitHub Actions اجرا می‌شوند |
-| ساخت APK دیباگ | 🟢 در GitHub Actions (Artifact: `vz-network-booster-debug-apk`) |
-| محیط Build قابل تکرار | ✅ `docker/Dockerfile` + `scripts/bootstrap-tools.sh` |
-| تست واقعی روی گوشی | ⚠️ نیازمند گوشی/شبیه‌ساز و یک رله WireGuard واقعی (در این محیط sandbox ممکن نیست) |
+| مورد | وضعیت | مدرک |
+| --- | --- | --- |
+| سورس کامل (Kotlin + Jetpack Compose، ۲۲ فایل Kotlin) | ✅ | `app/src/main/java/` |
+| تست‌های واحد JVM | ✅ ۲۰ تست / ۰ خطا | `dist/build-info.txt` |
+| APK دیباگ | ✅ ساخته شده — ۲۳٫۶ MB | [`dist/vz-network-booster-debug.apk`](dist/vz-network-booster-debug.apk) |
+| امضا و ترازبندی | ✅ `zipalign OK` + `apksigner verify` (V2، گواهی Android Debug) | `dist/build-info.txt` |
+| کتابخانه native داخل APK | ✅ `libwg-go.so` / `libwg.so` برای arm64-v8a, armeabi-v7a, x86, x86_64 | `dist/build-info.txt` |
+| محیط Build قابل تکرار | ✅ Dockerfile + bootstrap + CI | `docker/`, `scripts/` |
+| تست روی گوشی واقعی + رله واقعی | ❌ انجام نشده (بدون دستگاه و بدون سرور) | `docs/fa/REPORT.md` §۷ |
 
+APK مشخصات: `applicationId=com.vz.networkbooster.debug` · `minSdk 26` · `targetSdk 35` · `compileSdk 35`.
 گزارش کامل و صادقانه محدودیت‌ها: [`docs/fa/REPORT.md`](docs/fa/REPORT.md)
+
+### دریافت APK
+
+1. مستقیم از مخزن: [`dist/vz-network-booster-debug.apk`](dist/vz-network-booster-debug.apk)
+2. یا از GitHub Actions: تب Actions → آخرین اجرای سبز `Android CI` → Artifact `vz-network-booster-debug-apk`
+3. یا خودتان بسازید: `make apk` → `dist/app-debug.apk`
+
+پیش از نصب: «نصب از منابع نامعلوم» را برای فایل‌منیجر/مرورگر فعال کنید. نسخه دیباگ است و با
+کلید debug امضا شده؛ برای انتشار عمومی، keystore خودتان را بسازید.
 
 ## چه چیزی واقعی است و چه چیزی واقعی نیست
 
