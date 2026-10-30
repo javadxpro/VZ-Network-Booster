@@ -37,7 +37,7 @@ class AirEngineTest {
 
     @Test
     fun ewmaSmoothsTowardsTheNewSample() {
-        val previous = metrics("a", rtt = 100.0)
+        val previous = metrics("a", rtt = 100.0, samples = 1)
         val updated = AirEngine.update(previous, PathSample("a", 50.0, 0.0, 0.0, 2_000L))
         // alpha 0.4 -> 0.4*50 + 0.6*100 = 80
         assertEquals(80.0, updated.rttMs, 0.001)
