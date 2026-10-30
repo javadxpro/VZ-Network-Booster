@@ -1,10 +1,10 @@
 # VZ Network Booster — debug build facts
 
-- commit: `163276693eca14871e651a0c04ea3145dddb9add`
-- built at: 2026-10-30T07:10:11Z
+- commit: `f65417f98029787ceb607936575315f1c7c5f261`
+- built at: 2026-10-30T07:13:35Z
 - apk: app-debug.apk
 - size: 23601737 bytes
-- sha256: 92832570bfa6d456abd809068465c65228bed314be7e97c41889d722ac119dea
+- sha256: 62ee7185e9dabcd81cbc5ea084439c0d7e48400c220379d7f3cc65d1ec7d69d0
 - build-tools used for inspection: 37.0.0
 
 ## aapt2 badging
@@ -72,13 +72,24 @@ application-label-es:'VZ Network Booster'
     93248  1981-01-01 01:01   lib/x86_64/libwg.so
 ```
 
+## services declared in the merged manifest
+```
+          E: activity (line=47)
+          E: service (line=65)
+            A: http://schemas.android.com/apk/res/android:foregroundServiceType(0x01010599)=0x40000000
+          E: activity (line=89)
+          E: service (line=93)
+            A: http://schemas.android.com/apk/res/android:name(0x01010003)="com.wireguard.android.backend.GoBackend$VpnService" (Raw: "com.wireguard.android.backend.GoBackend$VpnService")
+            A: http://schemas.android.com/apk/res/android:permission(0x01010006)="android.permission.BIND_VPN_SERVICE" (Raw: "android.permission.BIND_VPN_SERVICE")
+```
+
 ## signature and alignment
 ```
 zipalign: OK
 V2 Signer: certificate DN: C=US, O=Android, CN=Android Debug
-V2 Signer: certificate SHA-256 digest: fed63ad661335670be56940d4ee6d5ca7fe1e6b0898b7f371e1159ed6b9a2bbe
-V2 Signer: certificate SHA-1 digest: 9c183cec115770f35832c6186cf6940bd1766eb7
-V2 Signer: certificate MD5 digest: 103c406a7c1ba07455dbde29b53aed0f
+V2 Signer: certificate SHA-256 digest: e9156b254023c886a7614c7080d0ad7fff8d822bb1951848a18b3a56413b1ad2
+V2 Signer: certificate SHA-1 digest: 3d7faa5d42862de210cf1ebb35fdefe8d642cf17
+V2 Signer: certificate MD5 digest: b08f6a9459a756a36eb186bcdba73255
 ```
 
 ## JVM unit test results
