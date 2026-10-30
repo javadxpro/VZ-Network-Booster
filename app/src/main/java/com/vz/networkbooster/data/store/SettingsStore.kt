@@ -32,6 +32,11 @@ class SettingsStore(context: Context) {
         get() = prefs.getInt(KEY_SAMPLES, 10)
         set(value) = prefs.edit { putInt(KEY_SAMPLES, value) }
 
+    /** true = no tunnel at all: straight to the game servers (ISP path, no route change). */
+    var directMode: Boolean
+        get() = prefs.getBoolean(KEY_DIRECT_MODE, false)
+        set(value) = prefs.edit { putBoolean(KEY_DIRECT_MODE, value) }
+
     // ---------------------------------------------------------------- root mode
     var rootEnabled: Boolean
         get() = prefs.getBoolean(KEY_ROOT_ENABLED, false)
@@ -53,6 +58,10 @@ class SettingsStore(context: Context) {
         get() = prefs.getBoolean(KEY_ROOT_CACHES, false)
         set(value) = prefs.edit { putBoolean(KEY_ROOT_CACHES, value) }
 
+    var rootQdisc: Boolean
+        get() = prefs.getBoolean(KEY_ROOT_QDISC, false)
+        set(value) = prefs.edit { putBoolean(KEY_ROOT_QDISC, value) }
+
     var rootIcmpProbes: Boolean
         get() = prefs.getBoolean(KEY_ROOT_ICMP, true)
         set(value) = prefs.edit { putBoolean(KEY_ROOT_ICMP, value) }
@@ -70,5 +79,7 @@ class SettingsStore(context: Context) {
         const val KEY_ROOT_TCP = "root_tcp_bbr"
         const val KEY_ROOT_CACHES = "root_drop_caches"
         const val KEY_ROOT_ICMP = "root_icmp"
+        const val KEY_DIRECT_MODE = "direct_mode"
+        const val KEY_ROOT_QDISC = "root_qdisc"
     }
 }

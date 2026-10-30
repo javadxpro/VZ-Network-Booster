@@ -34,6 +34,7 @@ fun SettingsScreen(
     onRootTcp: (Boolean) -> Unit,
     onRootCaches: (Boolean) -> Unit,
     onRootIcmp: (Boolean) -> Unit,
+    onRootQdisc: (Boolean) -> Unit,
     onApplyRoot: () -> Unit,
     onRevertRoot: () -> Unit,
     onRefreshRoot: () -> Unit,
@@ -111,6 +112,12 @@ fun SettingsScreen(
                 detail = "drop_caches یک‌باره؛ روی گوشی‌های کم‌رم مفید است، روی گوشی مدرن تأثیر کم.",
                 checked = state.rootDropCaches,
                 onChange = onRootCaches,
+            )
+            SwitchRow(
+                label = "Bufferbloat guard (fq_codel)",
+                detail = "qdisc فعال را موقتاً fq_codel می‌کند؛ جهش تأخیر وقتی برنامه دیگری آپلود را پر می‌کند کم می‌شود و هنگام بازگردانی مقدار قبلی برمی‌گردد.",
+                checked = state.rootQdisc,
+                onChange = onRootQdisc,
             )
             SwitchRow(
                 label = "پروب ICMP (ping واقعی)",

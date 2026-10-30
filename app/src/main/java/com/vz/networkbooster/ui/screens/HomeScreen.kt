@@ -35,6 +35,7 @@ fun HomeScreen(
     onOptimize: () -> Unit,
     onSelectServer: (String) -> Unit,
     onOpenRelays: () -> Unit,
+    onDirectMode: (Boolean) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -43,6 +44,44 @@ fun HomeScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        SectionCard(
+            title = "حالت اتصال",
+            subtitle = if (state.directMode) {
+                "مستقیم (بدون واسطه): ترافیک بازی همان مسیر ISP را می‌رود؛ اپ هیچ مسیری را عوض نمی‌کند."
+            } else {
+                "رله: ترافیک بازی از سرور WireGuard انتخاب‌شده شما عبور می‌کند."
+            },
+        ) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(
+                    onClick = { onDirectMode(false) },
+                    enabled = state.directMode,
+                    modifier = Modifier.weight(1f),
+                ) { Text("رله") }
+                OutlinedButton(
+                    onClick = { onDirectMode(true) },
+                    enabled = !state.directMode,
+                    modifier = Modifier.weight(1f),
+                ) { Text("مستقیم") }
+            }
+            if (state.directMode) {
+                Text(
+                    text = "بدون واسطه تونلی ساخته نمی‌شود. تنها کارهای ممکن: اندازه‌گیری مسیر واقعی و " +
+                        "تیونینگ سمت دستگاه با روت (Wi-Fi power save، fq_codel، BBR، Doze).",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Text(
+                    text = if (state.rootEnabled && state.rootAvailable) {
+                        "Root mode فعال است: دکمه پایین تیونینگ را اعمال می‌کند."
+                    } else {
+                        "Root mode خاموش است: در حالت مستقیم فقط اندازه‌گیری انجام می‌شود."
+                    },
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
         SectionCard(
             title = when (tunnel.phase) {
                 TunnelPhase.CONNECTED -> "Tunnel active"
@@ -71,7 +110,15 @@ fun HomeScreen(
                         onClick = onConnect,
                         enabled = !tunnel.isBusy,
                         modifier = Modifier.weight(1f),
-                    ) { Text(if (tunnel.isBusy) "Working…" else "Connect") }
+                    ) {
+                        Text(
+                            when {
+                                tunnel.isBusy -> "Working…"
+                                state.directMode -> "Apply device tuning"
+                                else -> "Connect"
+                            }
+                        )
+                    }
                 }
                 OutlinedButton(onClick = onOptimize, modifier = Modifier.weight(1f)) { Text("Optimize route") }
             }

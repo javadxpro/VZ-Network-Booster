@@ -43,6 +43,8 @@ APK مشخصات: `applicationId=com.vz.networkbooster.debug` · `minSdk 26` · 
 - Smart Routing قطعی و قابل تست (وزن‌دهی بر اساس تأخیر اندازه‌گیری‌شده + سلامت + متادیتای رله).
 - Auto Reconnect با backoff نمایی و Watchdog در Foreground Service.
 - ذخیره‌سازی رازها با AES-GCM در Android Keystore؛ هیچ کلیدی در مخزن نیست.
+- **حالت مستقیم (بدون واسطه):** اپ صریح می‌گوید بدون واسطه مسیر عوض نمی‌شود؛ در این حالت فقط
+  اندازه‌گیری واقعی + تیونینگ دستگاه انجام می‌دهد. [`docs/fa/DIRECT-MODE.md`](docs/fa/DIRECT-MODE.md)
 - **حالت روت (اختیاری):** پروب واقعی ICMP، خاموش‌کردن Wi-Fi power save، whitelist در Doze، BBR و
   drop_caches — همه با allow-list، بازگردانی خودکار و بدون هیچ ادعای «کاهش معجزه‌آسا». جزئیات:
   [`docs/fa/ROOT.md`](docs/fa/ROOT.md)

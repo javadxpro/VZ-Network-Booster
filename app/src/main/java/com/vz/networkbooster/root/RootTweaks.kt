@@ -30,6 +30,7 @@ class RootTweaks(
         val dozeWhitelist: Boolean = true,
         val tcpBbr: Boolean = false,
         val dropCaches: Boolean = false,
+        val qdiscFqCodel: Boolean = false,
     )
 
     data class Step(val title: String, val ok: Boolean, val detail: String)
@@ -42,6 +43,7 @@ class RootTweaks(
         if (config.wifiPowerSaveOff) steps += disableWifiPowerSave()
         if (config.dozeWhitelist) steps += whitelistDoze()
         if (config.tcpBbr) steps += enableBbr()
+        if (config.qdiscFqCodel) steps += enableFqCodel()
         if (config.dropCaches) steps += dropCaches()
         return steps
     }
@@ -64,6 +66,16 @@ class RootTweaks(
             val result = shell.exec("cmd deviceidle whitelist -$packageName", timeoutMs = 5_000)
             prefs.edit().putBoolean(KEY_DOZE_APPLIED, false).apply()
             steps += Step("remove Doze whitelist", result.ok, result.output.trim())
+        }
+
+        val originalQdisc = prefs.getString(KEY_ORIGINAL_QDISC, null)
+        val qdiscIface = prefs.getString(KEY_QDISC_IFACE, null)
+        if (!originalQdisc.isNullOrBlank() && qdiscIface != null &&
+            originalQdisc.matches(Regex("^[a-z_]+$")) && qdiscIface.matches(Regex("^[A-Za-z0-9_.-]{2,15}$"))
+        ) {
+            val result = shell.exec("tc qdisc replace dev $qdiscIface root $originalQdisc", timeoutMs = 5_000)
+            prefs.edit().remove(KEY_ORIGINAL_QDISC).remove(KEY_QDISC_IFACE).apply()
+            steps += Step("restore qdisc", result.ok, "$qdiscIface → $originalQdisc")
         }
 
         val originalCc = prefs.getString(KEY_ORIGINAL_CC, null)
@@ -134,6 +146,35 @@ class RootTweaks(
         )
     }
 
+    /**
+     * Bufferbloat guard: fq_codel on the active interface. This is the one
+     * device-side change that measurably reduces latency *spikes* when something
+     * else fills the uplink — no relay involved.
+     */
+    private suspend fun enableFqCodel(): Step {
+        val iface = detectActiveInterface()
+            ?: return Step("bufferbloat guard", false, "no active interface detected")
+        val show = shell.exec("tc qdisc show dev $iface", timeoutMs = 5_000)
+        if (!show.ok) return Step("bufferbloat guard", false, "tc not available: ${show.output.trim()}")
+        val currentKind = Regex("""qdisc\s+(\w+)""").find(show.output)?.groupValues?.get(1)
+        if (currentKind == "fq_codel") return Step("bufferbloat guard", true, "$iface already uses fq_codel")
+        if (currentKind != null && !prefs.contains(KEY_ORIGINAL_QDISC)) {
+            prefs.edit().putString(KEY_ORIGINAL_QDISC, currentKind).putString(KEY_QDISC_IFACE, iface).apply()
+        }
+        val result = shell.exec("tc qdisc replace dev $iface root fq_codel", timeoutMs = 5_000)
+        return Step(
+            "bufferbloat guard",
+            result.ok,
+            if (result.ok) "$iface: ${currentKind ?: "unknown"} → fq_codel" else result.output.trim(),
+        )
+    }
+
+    private suspend fun detectActiveInterface(): String? {
+        val result = shell.exec("ip -o route get 1.1.1.1 2>/dev/null | grep -o 'dev [^ ]*'", timeoutMs = 5_000)
+        val name = Regex("""dev\s+([A-Za-z0-9_.-]{2,15})""").find(result.output)?.groupValues?.get(1)
+        return name?.takeIf { it.matches(Regex("^[A-Za-z0-9_.-]{2,15}$")) }
+    }
+
     private suspend fun dropCaches(): Step {
         val result = shell.exec("sync; echo 3 > /proc/sys/vm/drop_caches", timeoutMs = 8_000)
         return Step(
@@ -157,5 +198,7 @@ class RootTweaks(
         const val KEY_WIFI_IFACE = "wifi_iface"
         const val KEY_DOZE_APPLIED = "doze_applied"
         const val KEY_ORIGINAL_CC = "original_tcp_cc"
+        const val KEY_ORIGINAL_QDISC = "original_qdisc"
+        const val KEY_QDISC_IFACE = "qdisc_iface"
     }
 }

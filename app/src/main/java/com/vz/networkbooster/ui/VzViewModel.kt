@@ -61,6 +61,8 @@ data class UiState(
     val rootTcpBbr: Boolean = false,
     val rootDropCaches: Boolean = false,
     val rootIcmpProbes: Boolean = true,
+    val rootQdisc: Boolean = false,
+    val directMode: Boolean = false,
     val rootLog: List<String> = emptyList(),
     val busy: String? = null,
     val optimizerRunning: Boolean = false,
@@ -114,6 +116,8 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
                     rootTcpBbr = settings.rootTcpBbr,
                     rootDropCaches = settings.rootDropCaches,
                     rootIcmpProbes = settings.rootIcmpProbes,
+                    rootQdisc = settings.rootQdisc,
+                    directMode = settings.directMode,
                 )
             }
             recomputeRanking()
@@ -357,6 +361,42 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
         _state.update { it.copy(rootDropCaches = enabled) }
     }
 
+    fun setRootQdisc(enabled: Boolean) {
+        settings.rootQdisc = enabled
+        _state.update { it.copy(rootQdisc = enabled) }
+    }
+
+    /**
+     * Direct mode: no tunnel, no relay. The app is explicit that this cannot
+     * change the route — it only measures the real ISP path and applies
+     * device-side tuning (root) that needs no intermediary.
+     */
+    fun setDirectMode(enabled: Boolean) {
+        settings.directMode = enabled
+        _state.update { it.copy(directMode = enabled) }
+        if (enabled) {
+            viewModelScope.launch {
+                VpnManager.disconnect()
+                runCatching { BoosterService.stop(getApplication()) }
+                if (_state.value.rootEnabled && _state.value.rootAvailable) {
+                    val steps = rootTweaks.apply(currentRootConfig())
+                    _state.update {
+                        it.copy(
+                            rootLog = steps.map { step -> (if (step.ok) "✔ " else "✘ ") + step.title + " — " + step.detail },
+                            message = "حالت مستقیم: تونل خاموش شد و تیونینگ دستگاه اعمال شد",
+                        )
+                    }
+                } else {
+                    _state.update {
+                        it.copy(message = "حالت مستقیم: تونل خاموش شد (بدون روت فقط اندازه‌گیری باقی می‌ماند)")
+                    }
+                }
+            }
+        } else {
+            _state.update { it.copy(message = "حالت رله: می‌توانید Connect بزنید") }
+        }
+    }
+
     fun setRootIcmpProbes(enabled: Boolean) {
         settings.rootIcmpProbes = enabled
         _state.update { it.copy(rootIcmpProbes = enabled) }
@@ -410,11 +450,33 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
         dozeWhitelist = _state.value.rootDozeWhitelist,
         tcpBbr = _state.value.rootTcpBbr,
         dropCaches = _state.value.rootDropCaches,
+        qdiscFqCodel = _state.value.rootQdisc,
     )
 
     // ----------------------------------------------------------------- vpn
 
     fun connect() {
+        if (_state.value.directMode) {
+            viewModelScope.launch {
+                if (_state.value.rootEnabled && _state.value.rootAvailable) {
+                    val steps = rootTweaks.apply(currentRootConfig())
+                    _state.update {
+                        it.copy(
+                            rootLog = steps.map { step -> (if (step.ok) "✔ " else "✘ ") + step.title + " — " + step.detail },
+                            message = "حالت مستقیم فعال است: تونلی ساخته نمی‌شود، فقط تیونینگ دستگاه اعمال شد",
+                        )
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            message = "حالت مستقیم: مسیر همان مسیر ISP است؛ کاری برای بهبود مسیر وجود ندارد. " +
+                                "برای تیونینگ دستگاه Root mode را فعال کنید",
+                        )
+                    }
+                }
+            }
+            return
+        }
         val server = _state.value.activeServer
         if (server == null) {
             _state.update { it.copy(message = "add or select a relay server first") }
@@ -487,12 +549,7 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
     fun runQualityTest(target: ProbeTarget, samples: Int = 10) {
         viewModelScope.launch {
             _state.update { it.copy(busy = "measuring ${target.label}") }
-            val path = if (VpnManager.state.value.phase == TunnelPhase.CONNECTED) {
-                "tunnel:${VpnManager.state.value.serverName ?: "active"}"
-            } else {
-                "direct"
-            }
-            val report = tester.measure(target, samples = samples, path = path)
+            val report = tester.measure(target, samples = samples, path = measurementPath())
             _state.update { it.copy(busy = null, reports = (listOf(report) + it.reports).take(40)) }
         }
     }
@@ -506,12 +563,7 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             for (target in targets) {
                 _state.update { it.copy(busy = "measuring ${target.label}") }
-                val path = if (VpnManager.state.value.phase == TunnelPhase.CONNECTED) {
-                    "tunnel:${VpnManager.state.value.serverName ?: "active"}"
-                } else {
-                    "direct"
-                }
-                val report = tester.measure(target, samples = samples, path = path)
+                val report = tester.measure(target, samples = samples, path = measurementPath())
                 _state.update { it.copy(reports = (listOf(report) + it.reports).take(40)) }
             }
             _state.update { it.copy(busy = null) }
@@ -530,6 +582,10 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
             add(BuiltInCatalog.referenceAnchors.first())
         }
         val probe = targets.first()
+        if (_state.value.directMode) {
+            _state.update { it.copy(message = "بهینه‌ساز مسیر به رله نیاز دارد؛ در حالت مستقیم معنی ندارد") }
+            return
+        }
         val candidates = _state.value.servers.filter { it.enabled && it.isConfigured }
         if (candidates.isEmpty()) {
             _state.update { it.copy(message = "no usable relay configured — import one first") }
@@ -603,6 +659,13 @@ class VzViewModel(application: Application) : AndroidViewModel(application) {
                 )
             }
         }
+    }
+
+    private fun measurementPath(): String = when {
+        VpnManager.state.value.phase == TunnelPhase.CONNECTED ->
+            "tunnel:${VpnManager.state.value.serverName ?: "active"}"
+        _state.value.directMode -> "direct (no relay)"
+        else -> "direct"
     }
 
     private fun log(line: String) = _state.update { it.copy(optimizerLog = it.optimizerLog + line) }

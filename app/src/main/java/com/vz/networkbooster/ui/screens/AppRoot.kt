@@ -66,6 +66,7 @@ fun AppRoot(viewModel: VzViewModel, onConnectRequested: () -> Unit) {
                     onOptimize = viewModel::optimizeRoute,
                     onSelectServer = viewModel::selectServer,
                     onOpenRelays = { tab = 2 },
+                    onDirectMode = viewModel::setDirectMode,
                 )
 
                 1 -> GamesScreen(
@@ -104,6 +105,7 @@ fun AppRoot(viewModel: VzViewModel, onConnectRequested: () -> Unit) {
                     onRootTcp = viewModel::setRootTcpBbr,
                     onRootCaches = viewModel::setRootDropCaches,
                     onRootIcmp = viewModel::setRootIcmpProbes,
+                    onRootQdisc = viewModel::setRootQdisc,
                     onApplyRoot = viewModel::applyRootTweaksNow,
                     onRevertRoot = viewModel::revertRootTweaks,
                     onRefreshRoot = viewModel::refreshRootStatus,

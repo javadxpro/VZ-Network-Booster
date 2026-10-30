@@ -11,6 +11,7 @@
 | **Wi-Fi power save off** | `iw dev wlan0 set power_save off` (یا `wifi_sleep_policy=2`) | یکی از منابع واقعی جهش تأخیر روی وای‌فای حذف می‌شود → jitter کمتر | مصرف باتری کمی بیشتر |
 | **Whitelist در Doze** | `cmd deviceidle whitelist +com.vz.networkbooster...` | سرویس تونل در پس‌زمینه کشته نمی‌شود → reconnect کمتر | باتری کمی بیشتر |
 | **BBR برای TCP** | اگر کرنل پشتیبانی کند: `bbr` | throughput بهتر روی لینک پرافت/بی‌کیفیت؛ **RTT را کم نمی‌کند** | تغییر موقت و بازگردانی‌شدنی |
+| **Bufferbloat guard (fq_codel)** | `tc qdisc replace dev <if> root fq_codel` | وقتی برنامه‌ی دیگری آپلود را پر می‌کند، جهش تأخیر بازی کم می‌شود — بدون واسطه | تغییر موقت qdisc (بازگردانی خودکار) |
 | **drop_caches** | `sync; echo 3 > /proc/sys/vm/drop_caches` | آزادسازی یک‌باره‌ی page cache؛ روی گوشی کم‌رم وقتی بازی kill می‌شود مفید | اثر کوتاه‌مدت، بی‌خطر |
 
 ## آنچه روت **اضافه نمی‌کند** (و ادعا هم نمی‌شود)
