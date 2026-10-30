@@ -1,0 +1,74 @@
+## wireguard tunnel maven-metadata (Maven Central)
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.wireguard.android</groupId>
+  <artifactId>tunnel</artifactId>
+  <versioning>
+    <latest>1.0.20260102</latest>
+    <release>1.0.20260102</release>
+    <versions>
+      <version>1.0.20210211</version>
+      <version>1.0.20210926</version>
+      <version>1.0.20211029</version>
+      <version>1.0.20230321</version>
+      <version>1.0.20230405</version>
+      <version>1.0.20230427</version>
+      <version>1.0.20230706</version>
+      <version>1.0.20250531</version>
+      <version>1.0.20251231</version>
+      <version>1.0.20260102</version>
+    </versions>
+    <lastUpdated>20260102024712</lastUpdated>
+  </versioning>
+</metadata>
+
+## search.maven.org g:com.wireguard.android
+{"responseHeader":{"status":0,"QTime":0,"params":{"q":"g:\"com.wireguard.android\"","core":"","indent":"off","spellcheck":"true","fl":"id,g,a,latestVersion,p,ec,repositoryId,text,timestamp,versionCount","start":"","spellcheck.count":"5","sort":"score desc,timestamp desc,g asc,a asc","rows":"40","wt":"json","version":"2.2"}},"response":{"numFound":1,"start":0,"docs":[{"id":"com.wireguard.android:tunnel","g":"com.wireguard.android","a":"tunnel","latestVersion":"1.0.20230706","repositoryId":"central","p":"aar","timestamp":1688667191000,"versionCount":7,"text":["com.wireguard.android","tunnel","-sources.jar.sha256","-javadoc.jar",".aar.sha256",".aar.sha512","-javadoc.jar.sha512",".module.asc.sha256",".module.asc.sha512",".aar.asc.sha512","-javadoc.jar.sha256","-sources.jar",".pom.sha512",".module","-sources.jar.asc.sha512",".aar",".module.sha256",".aar.asc.sha256",".pom","-sources.jar.asc.sha256",".module.sha512","-javadoc.jar.asc.sha256",".pom.asc.sha256","-javadoc.jar.asc.sha512",".pom.asc.sha512","-sources.jar.sha512",".pom.sha256"],"ec":["-sources.jar.sha256","-javadoc.jar",".aar.sha256",".aar.sha512","-javadoc.jar.sha512",".module.asc.sha256",".module.asc.sha512",".aar.asc.sha512","-javadoc.jar.sha256","-sources.jar",".pom.sha512",".module","-sources.jar.asc.sha512",".aar",".module.sha256",".aar.asc.sha256",".pom","-sources.jar.asc.sha256",".module.sha512","-javadoc.jar.asc.sha256",".pom.asc.sha256","-javadoc.jar.asc.sha512",".pom.asc.sha512","-sources.jar.sha512",".pom.sha256"]}]},"spellcheck":{"suggestions":[]}}
+## HTTP status probes
+200  https://repo1.maven.org/maven2/com/wireguard/android/tunnel/1.0.20230706/tunnel-1.0.20230706.pom
+404  https://repo1.maven.org/maven2/com/wireguard/android/tunnel/1.0.20231018/tunnel-1.0.20231018.pom
+404  https://repo1.maven.org/maven2/com/wireguard/android/tunnel/1.0.20260315/tunnel-1.0.20260315.pom
+200  https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/8.7.3/gradle-8.7.3.pom
+200  https://dl.google.com/dl/android/maven2/androidx/compose/compose-bom/2024.10.00/compose-bom-2024.10.00.pom
+200  https://dl.google.com/dl/android/maven2/androidx/compose/material/material-icons-core/1.7.4/material-icons-core-1.7.4.pom
+200  https://dl.google.com/dl/android/maven2/androidx/activity/activity-compose/1.9.3/activity-compose-1.9.3.pom
+200  https://dl.google.com/dl/android/maven2/androidx/lifecycle/lifecycle-runtime-compose/2.8.7/lifecycle-runtime-compose-2.8.7.pom
+200  https://dl.google.com/dl/android/maven2/androidx/core/core-ktx/1.13.1/core-ktx-1.13.1.pom
+200  https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin/2.0.21/kotlin-gradle-plugin-2.0.21.pom
+200  https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-compose-compiler-plugin-embeddable/2.0.21/kotlin-compose-compiler-plugin-embeddable-2.0.21.pom
+301  https://services.gradle.org/distributions/gradle-8.9-bin.zip.sha256
+
+## gradle 8.9 sha256
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>cloudflare</center>
+</body>
+</html>
+
+## android sdk packages on runner
+android-34
+android-34-ext10
+android-34-ext11
+android-34-ext12
+android-34-ext8
+android-35
+android-35-ext14
+android-35-ext15
+android-36
+android-36-ext18
+android-36-ext19
+android-36.1
+android-37.0
+android-37.1
+android-37.2
+android-37.2-beta1
+android-37.2-beta2
+android-37.2-beta3
+34.0.0
+35.0.0
+35.0.1
+36.0.0
+36.1.0
+37.0.0
